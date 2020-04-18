@@ -1,0 +1,15 @@
+html {
+    font-family: sans-serif;
+}
+
+body {
+    /* display: grid; */
+    /* grid-template-rows: 1fr 1fr; */
+    height: 90vh;
+    width: 80vw;
+    margin: 0 auto;
+}
+
+div {
+    margin: 10px;
+}

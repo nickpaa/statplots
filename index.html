@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <title>Statplots</title>
+    </head>
+
+    <script src="main.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.1/jstat.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+
+    <body>
+        <header>
+            <h1>Plot your favorite statistical distribution</h1>
+        </header>
+
+        <main>
+            <form>
+                <div>
+                    <label for="distrField">Choose a distribution</label>
+                    <select class="box" id="distrField">
+                        <option value="exponential">Exponential</option>
+                        <option value="normal">Normal</option>
+                        <option value="poisson">Poisson</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="meanField">Mean</label>
+                    <input id="meanField" type="text">
+                </div>
+                <div>
+                    <label for="sdField">Standard deviation</label>
+                    <input id="sdField" type="text">
+                </div>
+                <div>
+                    <label for="varField">Variance</label>
+                    <input id="varField" type="text">
+                </div>
+                <div>
+                    <label for ="pdf">PDF</label>
+                    <input type="radio" id="pdf" name="which" value="pdf" checked>
+                    <label for ="cdf">CDF</label>
+                    <input type="radio" id="cdf" name="which" value="cdf">
+                </div>
+                <div>
+                    <button id="update" type="button">Update</button>
+                </div>
+            </form>
+
+            <canvas id="chart"></canvas>
+        </main>
+    </body>
+
+</html>
