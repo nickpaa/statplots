@@ -1,37 +1,94 @@
 const distrField = document.getElementById('distrField');
 const meanField = document.getElementById('meanField');
+const whichSigma = document.getElementsByName('whichSigma');
+const useSD = document.getElementById('useSD');
+const useVar = document.getElementById('useVar');
 const sdField = document.getElementById('sdField');
 const varField = document.getElementById('varField');
+const whichPlot = document.getElementsByName('whichPlot');
+const plotPDF = document.getElementById('plotPDF');
+const plotCDF = document.getElementById('plotCDF');
 const update = document.getElementById('update');
+
 const canvas = document.querySelector('canvas');
 const ctx = document.getElementById('chart').getContext('2d');
 
-const N = 800;
+const buttons = document.getElementById('formulaButtons');
+const pyButton = document.getElementById('pyButton');
+const rButton = document.getElementById('rButton');
+const jsButton = document.getElementById('jsButton');
+const xlButton = document.getElementById('xlButton');
+
+const table = document.getElementById('formulaTable');
+
+const N = 400;
+
+const syntaxes = ['p','r','j','x'];
+const methods = ['pdf','cdf','pct','rv'];
 
 let mean;
 let sd;
-let whichFunction;
+let _var;
+let plotThis = 'pdf';
 let x = [];
 let y = [];
 let firstChart = true;
 
-meanField.onblur = validateInputs;
-sdField.onblur = validateInputs;
-varField.onblur = validateInputs;
+// user inputs
+
+meanField.onblur = updateMean;
+
+function updateMean() {
+    mean = Number(meanField.value);
+}
+
+useSD.onclick = updateSDandVar;
+useVar.onclick = updateSDandVar;
+sdField.onblur = updateSDandVar;
+varField.onblur = updateSDandVar;
+
+function updateSDandVar() {
+    if (whichSigma[0].checked) {
+        sdField.disabled = false;
+        varField.disabled = true;
+        varField.value = sdField.value * sdField.value;
+        sd = Number(sdField.value);
+        _var = Number(varField.value);
+    }
+    else {
+        sdField.disabled = true;
+        varField.disabled = false;
+        sdField.value = Math.sqrt(varField.value);
+        sd = Number(sdField.value);
+        _var = Number(varField.value);
+    }
+}
+
+plotPDF.onclick = updateWhichPlot;
+plotCDF.onclick = updateWhichPlot;
+
+function updateWhichPlot() {
+    if (whichPlot[0].checked) {
+        plotThis = 'pdf';
+    }
+    else {
+        plotThis = 'cdf';
+    }
+}
 
 function validateInputs() {
     if (sdField.value < 0) {
         alert('Standard deviation must be positive');
-        return;
+        return false;
     }
 
     if (varField.value < 0) {
         alert('Variance must be positive');
-        return;
+        return false;
     }
 
     if (distrField.value === 'normal') {
-        varField.value = sdField.value * sdField.value;
+        
     }
 
     if (distrField.value === 'exponential') {
@@ -40,17 +97,7 @@ function validateInputs() {
     }
 }
 
-update.onclick = updatePlot;
-
-function setWhichValue() {
-    const whichField = document.getElementsByName('which');
-    if (whichField[0].checked) {
-        whichFunction = 'pdf';
-    }
-    else {
-        whichFunction = 'cdf';
-    }
-}
+update.onclick = updatePage;
 
 function setIncrement(min, max) {
     return (max - min) / N;
@@ -68,7 +115,7 @@ function calcNormal() {
     
     for (let i = 0; i <= N; i++) {
         x[i] = Math.round((minX + i * inc) * 100) / 100;
-        if (whichFunction === 'pdf') {
+        if (plotThis === 'pdf') {
             y[i] = jStat.normal.pdf(x[i], mean, sd);
         }
         else {
@@ -89,7 +136,7 @@ function calcExponential() {
     
     for (let i = 0; i <= N; i++) {
         x[i] = Math.round((minX + i * inc) * 100) / 100;
-        if (whichFunction === 'pdf') {
+        if (plotThis === 'pdf') {
             y[i] = jStat.exponential.pdf(x[i], 1 / mean);
         }
         else {
@@ -111,7 +158,7 @@ function calcPoisson() {
     
     for (let i = 0; i <= maxX; i++) {
         x[i] = i;
-        if (whichFunction === 'pdf') {
+        if (plotThis === 'pdf') {
             y[i] = jStat.poisson.pdf(x[i], mean);
         }
         else {
@@ -120,13 +167,20 @@ function calcPoisson() {
     }
 }
 
-function updatePlot() {
+function updatePage() {
+    validateInputs();
+
+    ////////////////////
+    // maintenance stuff
+    ////////////////////
+
     x = [];
     y = [];
 
-    mean = Number(meanField.value);
-    sd = Number(sdField.value);
-    setWhichValue();
+    // mean = Number(meanField.value);
+    // sd = Number(sdField.value);
+    updateMean();
+    updateSDandVar();
 
     let plotType;
     // let distrType;
@@ -153,6 +207,10 @@ function updatePlot() {
         radius = 5;
     }
 
+    ////////////////////
+    // plotting
+    ////////////////////
+
     if (!firstChart) chart.destroy();
 
     firstChart = false;
@@ -164,7 +222,7 @@ function updatePlot() {
             datasets: [
                 {
                     data: y,
-                    label: whichFunction,
+                    label: plotThis,
                     borderColor: '#blue',
                     backgroundColor: 'blue',
                     fill: cont,
@@ -188,10 +246,42 @@ function updatePlot() {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: whichFunction
+                        labelString: plotThis
                     }
                 }]
             }
         }
     })
+
+    ////////////////////
+    // generate table
+    ////////////////////
+
+    buttons.hidden = false;
+
+    pmethods = {
+        "pdf": "norm.pdf(x, loc=" + mean + ", scale=" + sd,
+        "cdf": "norm.cdf(x, loc=" + mean + ", scale=" + sd,
+        "pct": "norm.ppf(q, loc=" + mean + ", scale=" + sd,
+        "rv": "rvs.ppf(loc=" + mean + ", scale=" + sd + ", size=N",
+    }
+
+    // document.getElementById('ppdf').textContent = 'test';
+    // for (var i = 0; i < syntaxes.length; i++) {
+    //     for (var j = 0; j < methods.length; j++) {
+    //         document.getElementById(syntaxes[i] + methods[j]).textContent = pmethods[methods[j]];
+    //     }
+    // }
+}
+
+pyButton.onclick = displayPyFormula;
+
+function displayPyFormula() {
+    table.hidden = false;
+
+    document.getElementById('syntax').textContent = "Python (scipy.stats)";
+    document.getElementById('pdfFormula').textContent = "norm.pdf(x, loc=" + mean + ", scale=" + sd + ")";
+    document.getElementById('cdfFormula').textContent = "norm.cdf(x, loc=" + mean + ", scale=" + sd + ")";
+    document.getElementById('pctFormula').textContent = "norm.ppf(q, loc=" + mean + ", scale=" + sd + ")";
+    document.getElementById('rvFormula').textContent = "norm.rvs(loc=" + mean + ", scale=" + sd + ", size=N)";
 }
