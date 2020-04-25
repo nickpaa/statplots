@@ -228,7 +228,7 @@ function updatePage() {
                     fill: cont,
                     showLine: cont,
                     pointRadius: radius,
-                    pointHitRadius: 3
+                    pointHitRadius: 5
                 }
             ],
         },

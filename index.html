@@ -4,89 +4,123 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="main.css">
         <title>Statplots</title>
     </head>
 
     <body>
-        <header>
-            <h1>Plot a statistical distribution in terms of mean and variance</h1>
-        </header>
 
-        <main>
-            <fieldset>
-                <div>
-                    <label for="distrField">Choose a distribution</label>
-                    <select class="box" id="distrField">
-                        <option value="exponential" disabled>Exponential</option>
-                        <option value="normal">Normal</option>
-                        <option value="poisson" disabled>Poisson</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="meanField">Mean</label>
-                    <input id="meanField" type="text">
-                </div>
-                <fieldset>
-                    <div>
-                        <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
-                        <label for="sdField">Standard deviation</label>
-                        <input id="sdField" type="text">
-                    </div>
-                    <div>
-                        <input type="radio" id="useVar" name="whichSigma" value="Var">
-                        <label for="varField">Variance</label>
-                        <input id="varField" type="text" disabled>
-                    </div>
-                </fieldset>
-                <div>
-                    <input type="radio" id="plotPDF" name="whichPlot" value="pdf" checked>
-                    <label for ="pdf">PDF</label>
-                    <input type="radio" id="plotCDF" name="whichPlot" value="cdf">
-                    <label for ="cdf">CDF</label>
-                </div>
-                <div>
-                    <!-- <button id="update" type="button">Update</button> -->
-                    <button id="update" type="submit">Update</button>
-                </div>
-            </fieldset>
+        <nav class="navbar navbar-expand-sm navbar-light bg-light">
+            <a class="navbar-brand" href="#">Statplots</a>
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMenu">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link 1</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link 2</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-            <div class="chartContainer">
-                <canvas id="chart"></canvas>
+        <div class="container my-container">
+        
+            <!-- <div class="row">
+                <div class="col">
+                    <h1>Plot a statistical distribution in terms of mean and variance</h1>
+                </div>
+            </div> -->
+        
+            <div class="row my-row">
+                <div class="col my-column">
+                        
+                        <div class="form-group">
+                            <label for="distrField">Choose a distribution</label>
+                            <select id="distrField" class="form-control">
+                                <option value="exponential" disabled>Exponential</option>
+                                <option value="normal">Normal</option>
+                                <option value="poisson" disabled>Poisson</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="meanField">Mean</label>
+                            <input id="meanField" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
+                            <label for="sdField">Standard deviation</label>
+                            <input id="sdField" type="text" class="form-control">
+                            <input type="radio" id="useVar" name="whichSigma" value="Var">
+                            <label for="varField">Variance</label>
+                            <input id="varField" type="text" class="form-control" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check-inline">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
+                                    <label class="custom-control-label" for="plotPDF">Plot PDF</label>
+                                </div>
+                                
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="plotCDF" name="whichPlot">
+                                    <label class="custom-control-label" for="plotCDF">Plot CDF</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-grou">
+                            <button id="update" type="submit">Update</button>
+                        </div>
+                    
+                </div>
             </div>
 
-            <fieldset id="formulaButtons" hidden>
-                <p>Display formulas</p>
-                <button id="pyButton">Python</button>
-                <button id="rButton" disabled>R</button>
-                <button id="jsButton" disabled>JavaScript</button>
-                <button id="xlButton" disabled>Excel</button>
-            </fieldset>
-            
-            <table id="formulaTable" hidden>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td id="syntax"></td>
-                    </tr>
-                    <tr>
-                        <td>PDF</td>
-                        <td id="pdfFormula"></td>
-                    </tr>
-                    <tr>
-                        <td>CDF</td>
-                        <td id="cdfFormula"></td>
-                    </tr>
-                    <tr>
-                        <td>Percentile</td>
-                        <td id="pctFormula"></td>
-                    </tr>
-                    <tr>
-                        <td>Random variables</td>
-                        <td id="rvFormula"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </main>
+            <div class="row my-row">
+                <div class="col-8 my-column">
+                    <canvas id="chart"></canvas>
+                </div>
+                <div class="col-4 my-column">
+                    <fieldset id="formulaButtons" hidden>
+                        <p>Display formulas</p>
+                        <button id="pyButton">Python</button>
+                        <button id="rButton" disabled>R</button>
+                        <button id="jsButton" disabled>JavaScript</button>
+                        <button id="xlButton" disabled>Excel</button>
+                    </fieldset>
+                    
+                    <table class="table-bordered" id="formulaTable" hidden>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td id="syntax"></td>
+                            </tr>
+                            <tr>
+                                <td>PDF</td>
+                                <td id="pdfFormula"></td>
+                            </tr>
+                            <tr>
+                                <td>CDF</td>
+                                <td id="cdfFormula"></td>
+                            </tr>
+                            <tr>
+                                <td>Percentile</td>
+                                <td id="pctFormula"></td>
+                            </tr>
+                            <tr>
+                                <td>Random variables</td>
+                                <td id="rvFormula"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         
         <!-- My JS stuff -->
         <script src="main.js" defer></script>
