@@ -2,93 +2,153 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="main.css">
         <title>Statplots</title>
     </head>
-    <script src="main.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.1/jstat.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
 
     <body>
-        <header>
-            <h1>Plot a statistical distribution in terms of mean and variance</h1>
-        </header>
 
-        <main>
-            <fieldset>
-                <div>
-                    <label for="distrField">Choose a distribution</label>
-                    <select class="box" id="distrField">
-                        <option value="exponential" disabled>Exponential</option>
-                        <option value="normal">Normal</option>
-                        <option value="poisson" disabled>Poisson</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="meanField">Mean</label>
-                    <input id="meanField" type="text">
-                </div>
-                <fieldset>
-                    <div>
-                        <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
-                        <label for="sdField">Standard deviation</label>
-                        <input id="sdField" type="text">
-                    </div>
-                    <div>
-                        <input type="radio" id="useVar" name="whichSigma" value="Var">
-                        <label for="varField">Variance</label>
-                        <input id="varField" type="text" disabled>
-                    </div>
-                </fieldset>
-                <div>
-                    <input type="radio" id="plotPDF" name="whichPlot" value="pdf" checked>
-                    <label for ="pdf">PDF</label>
-                    <input type="radio" id="plotCDF" name="whichPlot" value="cdf">
-                    <label for ="cdf">CDF</label>
-                </div>
-                <div>
-                    <!-- <button id="update" type="button">Update</button> -->
-                    <button id="update" type="submit">Update</button>
-                </div>
-            </fieldset>
+        <nav class="navbar">
+            <a class="navbar-brand" href="#">Statplots</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About</a>
+                </li>
+            </ul>
+        </nav>
 
-            <div class="chartContainer">
-                <canvas id="chart"></canvas>
+        <div class="container">
+        
+            <div class="row">
+                <div class="col">
+                    <p id="intro" class="text-center">Plot a statistical distribution in terms of mean and variance, and get formulas to recreate the distribution</p>
+                </div>
+            </div>
+        
+            <div class="row">
+                <div class="col-md-4">
+                    <form>
+                        <div class="form-group">
+                            <label for="distField">Choose a distribution</label>
+                            <select id="distField" class="form-control">
+                                <option value="exponential">Exponential</option>
+                                <!-- <option value="gamma">Gamma</option> -->
+                                <option value="normal" selected>Normal</option>
+                                <option value="poisson">Poisson</option>
+                            </select>
+                            <small id="distHint"></small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="meanField">Mean (&mu;)</label>
+                            <input id="meanField" type="text" class="form-control" value="0">
+                            <div id="meanFeedback" class="invalid-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            
+                            <div class="form-check">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useSD" name="whichSigma" checked>
+                                    <label class="custom-control-label" for="useSD">Standard deviation (&sigma;)</label>
+                                    <input id="sdField" type="text" class="form-control" value="1">
+                                    <div id="sdFeedback" class="invalid-feedback"></div>
+                                </div>
+                                
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useVar" name="whichSigma">
+                                    <label class="custom-control-label" for="useVar">Variance (&sigma;<sup>2</sup>)</label>
+                                    <input id="varField" type="text" class="form-control" value="1" disabled>
+                                    <div id="varFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <!-- <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
+                            <label for="sdField">Standard deviation</label>
+                            <input id="sdField" type="text" class="form-control" value="1">
+                            <div id="sdFeedback" class="invalid-feedback"></div>
+
+                            <input type="radio" id="useVar" name="whichSigma" value="Var">
+                            <label for="varField">Variance</label>
+                            <input id="varField" type="text" class="form-control" value="1" disabled>
+                            <div id="varFeedback" class="invalid-feedback"></div> -->
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check-inline">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
+                                    <label class="custom-control-label" for="plotPDF">Plot PDF/PMF</label>
+                                </div>
+                                
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="plotCDF" name="whichPlot">
+                                    <label class="custom-control-label" for="plotCDF">Plot CDF</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-outline-secondary" id="update" type="button">Update</button>
+                        </div>
+                    </form>
+                </div>
+            
+                <div class="col-md-8">
+                    <canvas id="chart"></canvas>
+                </div>
             </div>
 
-            <fieldset id="formulaButtons" hidden>
-                <p>Display formulas</p>
-                <button id="pyButton">Python</button>
-                <button id="rButton" disabled>R</button>
-                <button id="jsButton" disabled>JavaScript</button>
-                <button id="xlButton" disabled>Excel</button>
-            </fieldset>
-            
-            <table id="formulaTable" hidden>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td id="syntax"></td>
-                    </tr>
-                    <tr>
-                        <td>PDF</td>
-                        <td id="pdfFormula"></td>
-                    </tr>
-                    <tr>
-                        <td>CDF</td>
-                        <td id="cdfFormula"></td>
-                    </tr>
-                    <tr>
-                        <td>Percentile</td>
-                        <td id="pctFormula"></td>
-                    </tr>
-                    <tr>
-                        <td>Random variables</td>
-                        <td id="rvFormula"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </main>
-        <!-- <script src="main.js" defer></script> -->
+            <div class="row">
+                <div class="btn-group" id="formulaButtons" hidden>
+                    <button class="btn btn-outline-secondary" id="pyButton" type="button">Python</button>
+                    <button class="btn btn-outline-secondary" id="rButton" type="button" disabled>R</button>
+                    <button class="btn btn-outline-secondary" id="jsButton" type="button" disabled>JavaScript</button>
+                    <button class="btn btn-outline-secondary" id="xlButton" type="button" disabled>Excel</button>
+                </div>
+            </div>
+            <div class="row">
+                <table class="table table-bordered" id="formulaTable" hidden>
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col" id="syntax"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th id="pdfpmf" scope="row">PDF (evaluated at x)</th>
+                            <td id="pdfFormula"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">CDF (evaluated at x)</th>
+                            <td id="cdfFormula"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Percentile/quantile (evaluated at p or q)</th>
+                            <td id="pctFormula"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" id="rvDescription">Draw N random variables</th>
+                            <td id="rvFormula"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- My JS stuff -->
+        <script src="main.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.1/jstat.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.2.0/decimal.min.js"></script> -->
+
+        <!-- Bootstrap -->
+        <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script> -->
+        <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
     </body>
 </html>
