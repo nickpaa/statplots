@@ -271,7 +271,11 @@ function calcPoisson() {
     let maxX = 4 * _var;
     // let inc = setIncrement(minX, maxX);
 
-    for (let i = 0; i <= maxX; i++) {
+    let i = 0;
+
+    do {
+    // for (let i = 0; i < Infinity; i++)
+    // for (let i = 0; i <= maxX; i++) {
         x[i] = i;
         if (plotThis === 'pdf') {
             y[i] = jStat.poisson.pdf(x[i], mean);
@@ -279,7 +283,12 @@ function calcPoisson() {
         else {
             y[i] = jStat.poisson.cdf(x[i], mean);
         }
-    }
+
+        // if (x[i] > mean && y[i] < 0.000001) {
+        //     break;
+        // }
+        i++;
+    } while (x[i-1] <= mean || y[i-1] > 0.000001)
 }
 
 update.onclick = updatePage;
