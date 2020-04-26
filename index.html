@@ -4,13 +4,14 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="main.css">
         <title>Statplots</title>
     </head>
 
     <body>
 
-        <nav class="navbar navbar-expand-sm navbar-light bg-light">
+        <nav class="navbar navbar-expand-sm">
             <a class="navbar-brand" href="#">Statplots</a>
             <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarMenu">
                 <span class="navbar-toggler-icon"></span>
@@ -18,53 +19,73 @@
             <div class="collapse navbar-collapse" id="navbarMenu">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link 1</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link 2</a>
+                        <a class="nav-link" href="about.html">About</a>
                     </li>
                 </ul>
             </div>
         </nav>
 
-        <div class="container my-container">
+        <div class="container">
         
-            <!-- <div class="row">
+            <div class="row">
                 <div class="col">
-                    <h1>Plot a statistical distribution in terms of mean and variance</h1>
+                    <p id="intro" class="text-center">Plot a statistical distribution in terms of mean and variance, and get formulas to recreate the distribution</p>
                 </div>
-            </div> -->
+            </div>
         
-            <div class="row my-row">
-                <div class="col my-column">
-                        
+            <div class="row">
+                <div class="col-4">
+                    <form>
                         <div class="form-group">
-                            <label for="distrField">Choose a distribution</label>
-                            <select id="distrField" class="form-control">
-                                <option value="exponential" disabled>Exponential</option>
-                                <option value="normal">Normal</option>
-                                <option value="poisson" disabled>Poisson</option>
+                            <label for="distField">Choose a distribution</label>
+                            <select id="distField" class="form-control">
+                                <option value="exponential">Exponential</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="poisson">Poisson</option>
                             </select>
+                            <small id="distHint"></small>
                         </div>
                         
                         <div class="form-group">
-                            <label for="meanField">Mean</label>
-                            <input id="meanField" type="text" class="form-control">
+                            <label for="meanField">Mean (&mu;)</label>
+                            <input id="meanField" type="text" class="form-control" value="0">
+                            <div id="meanFeedback" class="invalid-feedback"></div>
                         </div>
+                        
                         <div class="form-group">
-                            <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
+                            
+                            <div class="form-check">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useSD" name="whichSigma" checked>
+                                    <label class="custom-control-label" for="useSD">Standard deviation (&sigma;)</label>
+                                    <input id="sdField" type="text" class="form-control" value="1">
+                                    <div id="sdFeedback" class="invalid-feedback"></div>
+                                </div>
+                                
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useVar" name="whichSigma">
+                                    <label class="custom-control-label" for="useVar">Variance (&sigma;<sup>2</sup>)</label>
+                                    <input id="varField" type="text" class="form-control" value="1" disabled>
+                                    <div id="varFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <!-- <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
                             <label for="sdField">Standard deviation</label>
-                            <input id="sdField" type="text" class="form-control">
+                            <input id="sdField" type="text" class="form-control" value="1">
+                            <div id="sdFeedback" class="invalid-feedback"></div>
+
                             <input type="radio" id="useVar" name="whichSigma" value="Var">
                             <label for="varField">Variance</label>
-                            <input id="varField" type="text" class="form-control" disabled>
+                            <input id="varField" type="text" class="form-control" value="1" disabled>
+                            <div id="varFeedback" class="invalid-feedback"></div> -->
                         </div>
 
                         <div class="form-group">
                             <div class="form-check-inline">
                                 <div class="custom-control custom-radio custom-control-inline">
                                     <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
-                                    <label class="custom-control-label" for="plotPDF">Plot PDF</label>
+                                    <label class="custom-control-label" for="plotPDF">Plot PDF/PMF</label>
                                 </div>
                                 
                                 <div class="custom-control custom-radio custom-control-inline">
@@ -74,51 +95,52 @@
                             </div>
                         </div>
 
-                        <div class="form-grou">
-                            <button id="update" type="submit">Update</button>
+                        <div class="form-group">
+                            <button class="btn btn-outline-secondary" id="update" type="button">Update</button>
                         </div>
-                    
+                    </form>
+                </div>
+            
+                <div class="col-8">
+                    <canvas id="chart"></canvas>
                 </div>
             </div>
 
-            <div class="row my-row">
-                <div class="col-8 my-column">
-                    <canvas id="chart"></canvas>
+            <div class="row">
+                <div class="btn-group" id="formulaButtons" hidden>
+                    <button class="btn btn-outline-secondary" id="pyButton" type="button">Python</button>
+                    <button class="btn btn-outline-secondary" id="rButton" type="button" disabled>R</button>
+                    <button class="btn btn-outline-secondary" id="jsButton" type="button" disabled>JavaScript</button>
+                    <button class="btn btn-outline-secondary" id="xlButton" type="button" disabled>Excel</button>
                 </div>
-                <div class="col-4 my-column">
-                    <fieldset id="formulaButtons" hidden>
-                        <p>Display formulas</p>
-                        <button id="pyButton">Python</button>
-                        <button id="rButton" disabled>R</button>
-                        <button id="jsButton" disabled>JavaScript</button>
-                        <button id="xlButton" disabled>Excel</button>
-                    </fieldset>
-                    
-                    <table class="table-bordered" id="formulaTable" hidden>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td id="syntax"></td>
-                            </tr>
-                            <tr>
-                                <td>PDF</td>
-                                <td id="pdfFormula"></td>
-                            </tr>
-                            <tr>
-                                <td>CDF</td>
-                                <td id="cdfFormula"></td>
-                            </tr>
-                            <tr>
-                                <td>Percentile</td>
-                                <td id="pctFormula"></td>
-                            </tr>
-                            <tr>
-                                <td>Random variables</td>
-                                <td id="rvFormula"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            </div>
+            <div class="row">
+                <table class="table table-bordered" id="formulaTable" hidden>
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col" id="syntax"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th id="pdfpmf" scope="row">PDF (evaluated at x)</th>
+                            <td id="pdfFormula"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">CDF (evaluated at x)</th>
+                            <td id="cdfFormula"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Percentile/quantile (evaluated at p or q)</th>
+                            <td id="pctFormula"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" id="rvDescription">Draw N random variables</th>
+                            <td id="rvFormula"></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         
@@ -126,6 +148,7 @@
         <script src="main.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.1/jstat.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.2.0/decimal.min.js"></script> -->
 
         <!-- Bootstrap -->
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

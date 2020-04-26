@@ -1,0 +1,31 @@
+.navbar {
+    background-color: #2f4f4f;
+}
+
+.navbar-brand, .navbar-brand:hover, .nav-link, .nav-link:hover {
+    color: white;
+}
+
+.btn {
+    color: #2f4f4f;
+    background-color: white;
+    border: 1px solid #2f4f4f;
+}
+
+.btn:hover {
+    color: white;
+    background-color: #2f4f4f;
+    border: 1px solid #2f4f4f;
+}
+
+.row {
+    margin-top: 20px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+td {
+    font-family: 'Roboto Mono', monospace;
+}
