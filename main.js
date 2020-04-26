@@ -521,10 +521,10 @@ function displayPyFormula() {
     }
     else if (whichDist === 'poisson') {
         document.getElementById('pdfpmf').textContent = "PMF (evaluated at x)";
-        document.getElementById('pdfFormula').textContent = "poisson.pmf(x, shape=" + mean + ")";
-        document.getElementById('cdfFormula').textContent = "poisson.cdf(x, shape=" + mean + ")";
-        document.getElementById('pctFormula').textContent = "poisson.ppf(q, shape=" + mean + ")";
-        document.getElementById('rvFormula').textContent = "poisson.rvs(shape=" + mean + ", size=N)";
+        document.getElementById('pdfFormula').textContent = "poisson.pmf(x, mu=" + mean + ")";
+        document.getElementById('cdfFormula').textContent = "poisson.cdf(x, mu=" + mean + ")";
+        document.getElementById('pctFormula').textContent = "poisson.ppf(q, mu=" + mean + ")";
+        document.getElementById('rvFormula').textContent = "poisson.rvs(mu=" + mean + ", size=N)";
     }
 }
 
