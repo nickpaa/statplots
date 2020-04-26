@@ -25,7 +25,7 @@ let _var = 1;
 const whichPlot = document.getElementsByName('whichPlot');
 const plotPDF = document.getElementById('plotPDF');
 const plotCDF = document.getElementById('plotCDF');
-let plotThis = 'pdf';
+let plotThis = 'pdf/pmf';
 let firstChart = true;
 
 const update = document.getElementById('update');
@@ -140,7 +140,7 @@ plotCDF.onclick = updateWhichPlot;
 
 function updateWhichPlot() {
     if (whichPlot[0].checked) {
-        plotThis = 'pdf';
+        plotThis = 'pdf/pmf';
     }
     else {
         plotThis = 'cdf';
@@ -241,7 +241,7 @@ function calcNormal() {
     
     for (let i = 0; i <= N; i++) {
         x[i] = round(minX + i * inc, 6);
-        if (plotThis === 'pdf') {
+        if (plotThis === 'pdf/pmf') {
             y[i] = jStat.normal.pdf(x[i], mean, sd);
         }
         else {
@@ -257,7 +257,7 @@ function calcExponential() {
     
     for (let i = 0; i <= N; i++) {
         x[i] = round(minX + i * inc, 6);
-        if (plotThis === 'pdf') {
+        if (plotThis === 'pdf/pmf') {
             y[i] = jStat.exponential.pdf(x[i], 1 / mean);
         }
         else {
@@ -277,7 +277,7 @@ function calcPoisson() {
     // for (let i = 0; i < Infinity; i++)
     // for (let i = 0; i <= maxX; i++) {
         x[i] = i;
-        if (plotThis === 'pdf') {
+        if (plotThis === 'pdf/pmf') {
             y[i] = jStat.poisson.pdf(x[i], mean);
         }
         else {
