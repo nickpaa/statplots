@@ -470,7 +470,7 @@ function updatePage() {
     formulaButtons.hidden = false;
     formulaTable.hidden = false;
 
-    switch(whichSyntax) {
+    switch (whichSyntax) {
         case 'py':
             displayPyFormula();
             break;
@@ -483,6 +483,12 @@ function updatePage() {
         case 'xl':
             displayXlFormula();
             break;
+    }
+
+    if (whichDist != 'normal') {
+        rButton.disabled = true;
+        jsButton.disabled = true;
+        xlButton.disabled = true;
     }
 
 }
@@ -531,28 +537,42 @@ function displayPyFormula() {
 function displayRFormula() {
     whichSyntax = 'r';
     document.getElementById('syntax').textContent = "R";
-    document.getElementById('pdfFormula').textContent = "dnorm(x, mean=" + mean + ", sd=" + sd + ")";
-    document.getElementById('cdfFormula').textContent = "pnorm(x, mean=" + mean + ", sd=" + sd + ")";
-    document.getElementById('pctFormula').textContent = "qnorm(p, mean=" + mean + ", sd=" + sd + ")";
-    document.getElementById('rvFormula').textContent = "rnorm(N, mean=" + mean + ", sd=" + sd + ")";
+    
+    if (whichDist === 'normal') {
+        document.getElementById('pdfFormula').textContent = "dnorm(x, mean=" + mean + ", sd=" + sd + ")";
+        document.getElementById('cdfFormula').textContent = "pnorm(x, mean=" + mean + ", sd=" + sd + ")";
+        document.getElementById('pctFormula').textContent = "qnorm(p, mean=" + mean + ", sd=" + sd + ")";
+        document.getElementById('rvFormula').textContent = "rnorm(N, mean=" + mean + ", sd=" + sd + ")";
+    }
+    
+    else {
+        document.getElementById('rButton').disabled = true;
+    }
 }
 
 function displayJsFormula() {
     whichSyntax = 'js';
     document.getElementById('syntax').textContent = "JavaScript (jStat)";
-    document.getElementById('pdfFormula').textContent = "jStat.normal.pdf(x, mean=" + mean + ", std=" + sd + ")";
-    document.getElementById('cdfFormula').textContent = "jStat.normal.cdf(x, mean=" + mean + ", std=" + sd + ")";
-    document.getElementById('pctFormula').textContent = "jStat.normal.inv(p, mean=" + mean + ", std=" + sd + ")";
-    document.getElementById('rvFormula').textContent = "jStat.normal.sample(mean=" + mean + ", std=" + sd + ")";
     document.getElementById('rvDescription').textContent = 'Draw one random variable'
+
+    if (whichDist === 'normal') {
+        document.getElementById('pdfFormula').textContent = "jStat.normal.pdf(x, mean=" + mean + ", std=" + sd + ")";
+        document.getElementById('cdfFormula').textContent = "jStat.normal.cdf(x, mean=" + mean + ", std=" + sd + ")";
+        document.getElementById('pctFormula').textContent = "jStat.normal.inv(p, mean=" + mean + ", std=" + sd + ")";
+        document.getElementById('rvFormula').textContent = "jStat.normal.sample(mean=" + mean + ", std=" + sd + ")";
+            
+    }
 }
 
 function displayXlFormula() {
     whichSyntax = 'xl';
     document.getElementById('syntax').textContent = "Excel";
-    document.getElementById('pdfFormula').textContent = "norm.dist(x, "+ mean + ", " + sd + ", false)";
-    document.getElementById('cdfFormula').textContent = "norm.dist(x, "+ mean + ", " + sd + ", true)";
-    document.getElementById('pctFormula').textContent = "norm.inv(p, "+ mean + ", " + sd + ", false)";
-    document.getElementById('rvFormula').textContent = "";
     document.getElementById('rvDescription').textContent = 'Draw one random variable'
+
+    if (whichDist === 'normal') {
+        document.getElementById('pdfFormula').textContent = "norm.dist(x, "+ mean + ", " + sd + ", false)";
+        document.getElementById('cdfFormula').textContent = "norm.dist(x, "+ mean + ", " + sd + ", true)";
+        document.getElementById('pctFormula').textContent = "norm.inv(p, "+ mean + ", " + sd + ", false)";
+        document.getElementById('rvFormula').textContent = "";
+    }
 }
