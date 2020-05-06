@@ -506,6 +506,7 @@ xlButton.addEventListener('click', displayXlFormula);
 function displayPyFormula() {
     whichSyntax = 'py';
     document.getElementById('syntax').textContent = "Python (scipy.stats)";
+    document.getElementById('rvDescription').textContent = 'Draw N random variables';
 
     if (whichDist === 'exponential') {
         document.getElementById('pdfFormula').textContent = "expon.pdf(x, scale=1/" + mean + ")";
@@ -537,6 +538,7 @@ function displayPyFormula() {
 function displayRFormula() {
     whichSyntax = 'r';
     document.getElementById('syntax').textContent = "R";
+    document.getElementById('rvDescription').textContent = 'Draw N random variables';
     
     if (whichDist === 'normal') {
         document.getElementById('pdfFormula').textContent = "dnorm(x, mean=" + mean + ", sd=" + sd + ")";
@@ -553,7 +555,7 @@ function displayRFormula() {
 function displayJsFormula() {
     whichSyntax = 'js';
     document.getElementById('syntax').textContent = "JavaScript (jStat)";
-    document.getElementById('rvDescription').textContent = 'Draw one random variable'
+    document.getElementById('rvDescription').textContent = 'Draw one random variable';
 
     if (whichDist === 'normal') {
         document.getElementById('pdfFormula').textContent = "jStat.normal.pdf(x, mean=" + mean + ", std=" + sd + ")";
@@ -567,7 +569,7 @@ function displayJsFormula() {
 function displayXlFormula() {
     whichSyntax = 'xl';
     document.getElementById('syntax').textContent = "Excel";
-    document.getElementById('rvDescription').textContent = 'Draw one random variable'
+    document.getElementById('rvDescription').textContent = 'Draw one random variable';
 
     if (whichDist === 'normal') {
         document.getElementById('pdfFormula').textContent = "norm.dist(x, "+ mean + ", " + sd + ", false)";
