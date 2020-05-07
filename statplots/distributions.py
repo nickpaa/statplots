@@ -20,7 +20,7 @@ def calcExponential(mean, sd, plotThis):
     d = expon(scale=scale)
     # mean = 1 / lambda = scale
     
-    x = xDiscreteZero(d)
+    x = xContinuousZero(d)
     
     return x, yContinuous(d, x, plotThis)
 
@@ -30,7 +30,7 @@ def calcFoldedNormal(mean, sd, plotThis):
     c = mean / sd
     d = foldnorm(scale=scale, c=c)
 
-    x = xDiscreteZero(d)
+    x = xContinuousZero(d)
 
     return x, yContinuous(d, x, plotThis)
 
@@ -39,7 +39,7 @@ def calcGamma(mean, sd, plotThis):
     scale = sd ** 2 / mean
     d = gamma(a=a, scale=scale)
 
-    x = xDiscreteZero(d)
+    x = xContinuousZero(d)
     
     return x, yContinuous(d, x, plotThis)
 
