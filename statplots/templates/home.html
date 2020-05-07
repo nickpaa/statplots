@@ -15,8 +15,11 @@
                         <div class="form-group">
                             <label for="distField">Choose a distribution</label>
                             <select id="distField" class="form-control">
+                                <option value="binomial">Binomial</option>
                                 <option value="exponential">Exponential</option>
-                                <!-- <option value="gamma">Gamma</option> -->
+                                <option value="folded normal" disabled>Folded normal</option>
+                                <option value="gamma">Gamma</option>
+                                <option value="negative binomial">Negative binomial</option>
                                 <option value="normal" selected>Normal</option>
                                 <option value="poisson">Poisson</option>
                             </select>
@@ -73,7 +76,7 @@
                         </div>
 
                         <div class="form-group">
-                            <button class="btn btn-outline-secondary" id="update" type="button" onclick="submit_params();">Update</button>
+                            <button class="btn btn-outline-secondary" id="update" type="button">Update</button>
                         </div>
                     </form>
                 </div>
@@ -122,38 +125,3 @@
         </div>
 
 {% endblock content %}
-
-{% block script %}
-<script>
-
-    function submit_params() {
-        var dist = document.getElementById('distField');
-        var mean = document.getElementById('meanField');
-        var sd = document.getElementById('sdField');
-        var params = {
-            dist: dist.value,
-            mean: mean.value,
-            sd: sd.value
-        }
-
-        fetch('/dist/update-plot', {
-            method: 'POST',
-            body: JSON.stringify(params),
-            headers: new Headers({
-                'content-type': 'application/json'
-            })
-        }).then(function (response) {
-            if (response.status !== 200) {
-                console.log(`Response status was not 200 ${response.status}`);
-                return;
-            }
-            
-            response.json().then(function (data) {
-                console.log('Python is sending as a response: ')
-                console.log(data);
-            })
-        })
-    }
-
-</script>
-{% endblock %}

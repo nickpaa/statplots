@@ -1,7 +1,9 @@
 from flask import Flask, render_template, url_for, request, jsonify, make_response
 from numpy import arange
 
-app = Flask(__name__)
+from statplots import app
+from statplots.distributions import *
+
 
 @app.route('/')
 @app.route('/home')
@@ -16,18 +18,29 @@ def about():
 # def guestbook():
 #     return render_template('dist.html')
 
-@app.route('/dist/update-plot', methods=['POST'])
+@app.route('/update-plot', methods=['POST'])
 def update_plot():
     req = request.get_json()
     print('JS is sending as a request:')
     print(req)
 
+    dist = req['dist']
     mean = float(req['mean'])
     sd = float(req['sd'])
+    plotThis = req['plotThis']
 
-    x = arange(mean - 4 * sd, mean + 4 * sd, 1).tolist()
+    calc = {'binomial': calcBinomial,
+            'exponential': calcExponential,
+            'folded normal': calcFoldedNormal,
+            'gamma': calcGamma,
+            'negative binomial': calcNegativeBinomial,
+            'normal': calcNormal, 
+            'poisson': calcPoisson}
+
+    x, y = calc[dist](mean, sd, plotThis)
+    stats = {'x':x.tolist(), 'y':y.tolist()}
     
-    res = make_response(jsonify(x), 200)
+    res = make_response(jsonify(stats), 200)
     return res
 
 if __name__ == '__main__':
