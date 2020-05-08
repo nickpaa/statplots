@@ -1,1 +1,1 @@
-web: gunicorn app:statplots
+web: gunicorn run:app
