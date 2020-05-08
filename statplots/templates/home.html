@@ -1,24 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="main.css">
-        <title>Statplots</title>
-    </head>
-
-    <body>
-
-        <nav class="navbar">
-            <a class="navbar-brand" href="#">Statplots</a>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="about.html">About</a>
-                </li>
-            </ul>
-        </nav>
+{% extends "layout.html" %}
+{% block content %}
 
         <div class="container">
         
@@ -34,8 +15,12 @@
                         <div class="form-group">
                             <label for="distField">Choose a distribution</label>
                             <select id="distField" class="form-control">
+                                <option value="beta">Beta</option>
+                                <option value="binomial">Binomial</option>
                                 <option value="exponential">Exponential</option>
-                                <!-- <option value="gamma">Gamma</option> -->
+                                <option value="folded normal" disabled>Folded normal</option>
+                                <option value="gamma">Gamma</option>
+                                <option value="negative binomial">Negative binomial</option>
                                 <option value="normal" selected>Normal</option>
                                 <option value="poisson">Poisson</option>
                             </select>
@@ -81,12 +66,12 @@
                             <div class="form-check-inline">
                                 <div class="custom-control custom-radio custom-control-inline">
                                     <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
-                                    <label class="custom-control-label" for="plotPDF">Plot PDF/PMF</label>
+                                    <label class="custom-control-label" for="plotPDF" id="plotPDFLabel">Plot PDF</label>
                                 </div>
                                 
                                 <div class="custom-control custom-radio custom-control-inline">
                                     <input type="radio" class="custom-control-input" id="plotCDF" name="whichPlot">
-                                    <label class="custom-control-label" for="plotCDF">Plot CDF</label>
+                                    <label class="custom-control-label" for="plotCDF" id="plotCDFLabel">Plot CDF</label>
                                 </div>
                             </div>
                         </div>
@@ -106,7 +91,7 @@
                 <div class="btn-group" id="formulaButtons" hidden>
                     <button class="btn btn-outline-secondary" id="pyButton" type="button">Python</button>
                     <button class="btn btn-outline-secondary" id="rButton" type="button">R</button>
-                    <button class="btn btn-outline-secondary" id="jsButton" type="button">JavaScript</button>
+                    <!-- <button class="btn btn-outline-secondary" id="jsButton" type="button">JavaScript</button> -->
                     <button class="btn btn-outline-secondary" id="xlButton" type="button">Excel</button>
                 </div>
             </div>
@@ -116,39 +101,41 @@
                         <tr>
                             <th scope="col"></th>
                             <th scope="col" id="syntax"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th id="pdfpmf" scope="row">PDF (evaluated at x)</th>
-                            <td id="pdfFormula"></td>
+                            <th id="pdfDescription" scope="row">PDF (evaluated at x)</th>
+                            <td id="pdfFormula" value="test"></td>
+                            <td id="pdfCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="pdfCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">CDF (evaluated at x)</th>
                             <td id="cdfFormula"></td>
+                            <td id="cdfCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="cdfCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">Percentile/quantile (evaluated at p or q)</th>
                             <td id="pctFormula"></td>
+                            <td id="pctCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="pctCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row" id="rvDescription">Draw N random variables</th>
                             <td id="rvFormula"></td>
+                            <td id="rvCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="rvCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        
-        <!-- My JS stuff -->
-        <script src="main.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.9.1/jstat.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.2.0/decimal.min.js"></script> -->
 
-        <!-- Bootstrap -->
-        <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
-        <!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script> -->
-        <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
-    </body>
-</html>
+{% endblock content %}
