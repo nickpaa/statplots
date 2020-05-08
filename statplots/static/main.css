@@ -6,13 +6,19 @@
     color: white;
 }
 
-.btn {
+.btn .btn-sm {
     color: #2f4f4f;
     background-color: white;
     border: 1px solid #2f4f4f;
 }
 
 .btn:hover {
+    color: white;
+    background-color: #2f4f4f;
+    border: 1px solid #2f4f4f;
+}
+
+.btn-selected {
     color: white;
     background-color: #2f4f4f;
     border: 1px solid #2f4f4f;

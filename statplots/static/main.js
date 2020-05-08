@@ -24,6 +24,7 @@ let _var = 1;
 
 const whichPlot = document.getElementsByName('whichPlot');
 const plotPDF = document.getElementById('plotPDF');
+const plotPDFLabel = document.getElementById('plotPDFLabel');
 const plotCDF = document.getElementById('plotCDF');
 let plotThis = 'fx';
 let firstChart = true;
@@ -36,11 +37,16 @@ const ctx = document.getElementById('chart').getContext('2d');
 const formulaButtons = document.getElementById('formulaButtons');
 const pyButton = document.getElementById('pyButton');
 const rButton = document.getElementById('rButton');
-const jsButton = document.getElementById('jsButton');
+// const jsButton = document.getElementById('jsButton');
 const xlButton = document.getElementById('xlButton');
 let whichSyntax = 'py';
 
 const formulaTable = document.getElementById('formulaTable');
+
+const copyPdfButton = document.getElementById('pdfCopyButton');
+const copyCdfButton = document.getElementById('cdfCopyButton');
+const copyPctButton = document.getElementById('pctCopyButton');
+const copyRvButton = document.getElementById('rvCopyButton');
 
 // const N = 400;
 
@@ -58,17 +64,23 @@ function round(value, decimals) {
 // user inputs
 
 function giveHint(dist) {
-    if (dist === 'binomial') {
+    if (dist === 'beta') {
+        distHint.textContent = 'Mean must be between 0 and 1';
+    }
+    else if (dist === 'binomial') {
         distHint.textContent = 'Mean must be greater than variance';
+        plotPDFLabel.textContent = 'Plot PMF';
     }
     else if (dist === 'exponential') {
         distHint.textContent = 'Mean and standard deviation must be equal';
     }
     else if (dist === 'negative binomial') {
         distHint.textContent = 'Mean must be less than variance';
+        plotPDFLabel.textContent = 'Plot PMF';
     }
     else if (dist === 'poisson') {
         distHint.textContent = 'Mean and variance must be equal';
+        plotPDFLabel.textContent = 'Plot PMF';
     }
     else {  // gamma, normal
         distHint.textContent = '';
@@ -160,7 +172,18 @@ function validateInputs() {
     }
 
     // dist specific
-    if (whichDist === 'binomial') {
+    if (whichDist === 'beta') {
+        if (mean <= 0 || mean >= 1) {
+            meanField.classList.add("is-invalid");
+            meanFeedback.textContent = 'Mean must be between 0 and 1'
+            validInputs = false;
+        }
+        else {
+            meanField.classList.remove("is-invalid");
+            meanFeedback.textContent = '';
+        }
+    }
+    else if (whichDist === 'binomial') {
         if (mean <= 0) {
             meanField.classList.add("is-invalid");
             meanFeedback.textContent = 'Mean must be positive'
@@ -293,7 +316,7 @@ async function submitParams() {
         plotThis: plotThis
     }
 
-    console.log('fetching');
+    // console.log('fetching');
     fetch('/update-plot', {
             method: 'POST',
             body: JSON.stringify(params),
@@ -303,8 +326,8 @@ async function submitParams() {
         })
     .then(response => response.json())
     .then(data => {
-        console.log('Python is sending as a response:');
-        console.log(data);
+        // console.log('Python is sending as a response:');
+        // console.log(data);
         setArrays(data);
     });
     // .then(drawPlot());
@@ -313,7 +336,7 @@ async function submitParams() {
 }
 
 function setArrays(data) {
-    console.log('setting arrays');
+    // console.log('setting arrays');
     x = data['x'];
     y = data['y'];
     drawPlot();
@@ -321,36 +344,33 @@ function setArrays(data) {
 
 function drawPlot() {
 
-    console.log('drawing plot');
+    // console.log('drawing plot');
 
     ////////////////////
     // maintenance stuff
     ////////////////////
 
-    // if (!validateInputs()) {
-    //     formulaButtons.hidden = true;
-    //     formulaTable.hidden = true;
-    //     if (!firstChart) chart.destroy();
-    //     return;
-    // };
-
-    let continuous;
+    let type;
+    // let continuous;
     let radius;
     let yLabel;
 
     switch (whichDist) {
+        case 'beta':
         case 'exponential':
         case 'folded normal':
         case 'gamma':
         case 'normal':
-            continuous = true;
+            type = 'line';
+            // continuous = true;
             radius = 0;
             yLabel = 'PDF'
             break;
         case 'binomial':
         case 'negative binomial':
         case 'poisson':
-            continuous = false;
+            type = 'bar';
+            // continuous = false;
             radius = 5;
             yLabel = 'PMF'
             break;
@@ -365,16 +385,8 @@ function drawPlot() {
 
     firstChart = false;
 
-    // deal with infinity
-    // let yMax;
-    // if (y[0] > 9999) {
-    //     yMax = 2 * y[1];
-    // }
-    // else yMax = Math.max(...y) * 1.1;
-    
-
     chart = new Chart(ctx, {
-        type: 'line',
+        type: type,
         data: {
             labels: x,
             datasets: [
@@ -382,9 +394,11 @@ function drawPlot() {
                     data: y,
                     label: yLabel,
                     borderColor: 'darkslategray',
+                    borderWidth: 2,
                     backgroundColor: 'rgba(47, 79, 79, 0.2)',
-                    fill: continuous,
-                    showLine: continuous,
+                    // fill: continuous,
+                    // showLine: continuous,
+                    barPercentage: 0.5,
                     pointRadius: radius,
                     pointHitRadius: 5
                 }
@@ -440,18 +454,12 @@ function drawPlot() {
         case 'r':
             displayRFormula();
             break;
-        case 'js':
-            displayJsFormula();
-            break;
+        // case 'js':
+        //     displayJsFormula();
+        //     break;
         case 'xl':
             displayXlFormula();
             break;
-    }
-
-    if (whichDist != 'normal') {
-        rButton.disabled = true;
-        jsButton.disabled = true;
-        xlButton.disabled = true;
     }
 
 }
@@ -462,108 +470,234 @@ function drawPlot() {
 
 pyButton.addEventListener('click', displayPyFormula);
 rButton.addEventListener('click', displayRFormula);
-jsButton.addEventListener('click', displayJsFormula);
+// jsButton.addEventListener('click', displayJsFormula);
 xlButton.addEventListener('click', displayXlFormula);
 
+let pdfDescription = document.getElementById('pdfDescription');
+let pdfFormula = document.getElementById('pdfFormula');
+let cdfFormula = document.getElementById('cdfFormula');
+let pctFormula = document.getElementById('pctFormula');
+let rvFormula = document.getElementById('rvFormula');
 
 function displayPyFormula() {
     whichSyntax = 'py';
+    pyButton.classList.add('btn-selected');
+    rButton.classList.remove('btn-selected');
+    xlButton.classList.remove('btn-selected');
     document.getElementById('syntax').textContent = "Python (scipy.stats)";
+    document.getElementById('rvDescription').textContent = 'Draw N random variables';
 
-    if (whichDist === 'binomial') {
-        document.getElementById('pdfFormula').textContent = "binom.pmf(x, n=" + mean * mean / (mean - _var) + ", p=" + (1 - (_var / mean)) + ")";
-        document.getElementById('cdfFormula').textContent = "binom.cdf(x, n=" + mean * mean / (mean - _var) + ", p=" + (1 - (_var / mean)) + ")";
-        document.getElementById('pctFormula').textContent = "binom.ppf(q, n=" + mean * mean / (mean - _var) + ", p=" + (1 - (_var / mean)) + ")";
-        document.getElementById('rvFormula').textContent = "binom.rvs(n=" + mean * mean / (mean - _var) + ", p=" + (1 - (_var / mean)) + ", size=N)";
+    if (whichDist === 'beta') {
+        let a = -mean * (mean * mean - mean + _var) / _var;
+        let b = (mean - 1) * (mean * mean - mean + _var) / _var;
+        pdfFormula.textContent = "beta.pmf(x, a=" + a + ", b=" + b + ")";
+        cdfFormula.textContent = "beta.cdf(x, a=" + a + ", b=" + b + ")";
+        pctFormula.textContent = "beta.ppf(q, a=" + a + ", b=" + b + ")";
+        rvFormula.textContent = "beta.rvs(a=" + a + ", b=" + b + ", size=N)";
+    }
+    else if (whichDist === 'binomial') {
+        pdfDescription.textContent = 'PMF (evaluated at x)'
+
+        let n = mean * mean / (mean - _var);
+        let p = (1 - (_var / mean));
+        pdfFormula.textContent = "binom.pmf(x, n=" + n  + ", p=" + p + ")";
+        cdfFormula.textContent = "binom.cdf(x, n=" + n + ", p=" + p + ")";
+        pctFormula.textContent = "binom.ppf(q, n=" + n + ", p=" + p + ")";
+        rvFormula.textContent = "binom.rvs(n=" + n + ", p=" + p + ", size=N)";
     }
     else if (whichDist === 'exponential') {
-        document.getElementById('pdfFormula').textContent = "expon.pdf(x, scale=" + mean + ")";
-        document.getElementById('cdfFormula').textContent = "expon.cdf(x, scale=" + mean + ")";
-        document.getElementById('pctFormula').textContent = "expon.ppf(q, scale=" + mean + ")";
-        document.getElementById('rvFormula').textContent = "expon.rvs(scale=" + mean + ", size=N)";
+        pdfFormula.textContent = "expon.pdf(x, scale=" + mean + ")";
+        cdfFormula.textContent = "expon.cdf(x, scale=" + mean + ")";
+        pctFormula.textContent = "expon.ppf(q, scale=" + mean + ")";
+        rvFormula.textContent = "expon.rvs(scale=" + mean + ", size=N)";
     }
     else if (whichDist === 'gamma') {
-        document.getElementById('pdfFormula').textContent = "gamma.pdf(x, a=" + (mean * mean) / _var + ", scale=" + _var / mean + ")";
-        document.getElementById('cdfFormula').textContent = "gamma.cdf(x, a=" + (mean * mean) / _var + ", scale=" + _var / mean + ")";
-        document.getElementById('pctFormula').textContent = "gamma.ppf(q, a=" + (mean * mean) / _var + ", scale=" + _var / mean + ")";
-        document.getElementById('rvFormula').textContent = "gamma.rvs(a=" + (mean * mean) / _var + ", scale=" + _var / mean + ", size=N)";
+        let a = (mean * mean) / _var;
+        let scale = _var / mean;
+        pdfFormula.textContent = "gamma.pdf(x, a=" + a + ", scale=" + scale + ")";
+        cdfFormula.textContent = "gamma.cdf(x, a=" + a + ", scale=" + scale + ")";
+        pctFormula.textContent = "gamma.ppf(q, a=" + a + ", scale=" + scale + ")";
+        rvFormula.textContent = "gamma.rvs(a=" + a + ", scale=" + scale + ", size=N)";
     }
     else if (whichDist === 'folded normal') {
-        document.getElementById('pdfFormula').textContent = "foldnorm.pdf(x, scale=" + sd + ", c=" + mean / sd + ")";
-        document.getElementById('cdfFormula').textContent = "foldnorm.cdf(x, scale=" + sd + ", c=" + mean / sd + ")";
-        document.getElementById('pctFormula').textContent = "foldnorm.ppf(q, scale=" + sd + ", c=" + mean / sd + ")";
-        document.getElementById('rvFormula').textContent = "foldnorm.rvs(scale=" + sd + ", c=" + mean / sd + ", size=N)";
+        pdfFormula.textContent = "foldnorm.pdf(x, scale=" + sd + ", c=" + mean / sd + ")";
+        cdfFormula.textContent = "foldnorm.cdf(x, scale=" + sd + ", c=" + mean / sd + ")";
+        pctFormula.textContent = "foldnorm.ppf(q, scale=" + sd + ", c=" + mean / sd + ")";
+        rvFormula.textContent = "foldnorm.rvs(scale=" + sd + ", c=" + mean / sd + ", size=N)";
     }
     else if (whichDist === 'negative binomial') {
-        document.getElementById('pdfFormula').textContent = "nbinom.pmf(x, n=" + mean * mean / (_var - mean) + ", p=" + mean / _var + ")";
-        document.getElementById('cdfFormula').textContent = "nbinom.cdf(x, n=" + mean * mean / (_var - mean) + ", p=" + mean / _var + ")";
-        document.getElementById('pctFormula').textContent = "nbinom.ppf(q, n=" + mean * mean / (_var - mean) + ", p=" + mean / _var + ")";
-        document.getElementById('rvFormula').textContent = "nbinom.rvs(n=" + mean * mean / (_var - mean) + ", p=" + mean / _var + ", size=N)";
+        pdfDescription.textContent = 'PMF (evaluated at x)'
+
+        let n = mean * mean / (_var - mean);
+        let p = mean / _var;
+        pdfFormula.textContent = "nbinom.pmf(x, n=" + n + ", p=" + p + ")";
+        cdfFormula.textContent = "nbinom.cdf(x, n=" + n + ", p=" + p + ")";
+        pctFormula.textContent = "nbinom.ppf(q, n=" + n + ", p=" + p + ")";
+        rvFormula.textContent = "nbinom.rvs(n=" + n + ", p=" + p + ", size=N)";
     }
     else if (whichDist === 'normal') {
-        document.getElementById('pdfFormula').textContent = "norm.pdf(x, loc=" + mean + ", scale=" + sd + ")";
-        document.getElementById('cdfFormula').textContent = "norm.cdf(x, loc=" + mean + ", scale=" + sd + ")";
-        document.getElementById('pctFormula').textContent = "norm.ppf(q, loc=" + mean + ", scale=" + sd + ")";
-        document.getElementById('rvFormula').textContent = "norm.rvs(loc=" + mean + ", scale=" + sd + ", size=N)";
+        pdfFormula.textContent = "norm.pdf(x, loc=" + mean + ", scale=" + sd + ")";
+        cdfFormula.textContent = "norm.cdf(x, loc=" + mean + ", scale=" + sd + ")";
+        pctFormula.textContent = "norm.ppf(q, loc=" + mean + ", scale=" + sd + ")";
+        rvFormula.textContent = "norm.rvs(loc=" + mean + ", scale=" + sd + ", size=N)";
     }
     else if (whichDist === 'poisson') {
-        document.getElementById('pdfpmf').textContent = "PMF (evaluated at x)";
-        document.getElementById('pdfFormula').textContent = "poisson.pmf(x, mu=" + mean + ")";
-        document.getElementById('cdfFormula').textContent = "poisson.cdf(x, mu=" + mean + ")";
-        document.getElementById('pctFormula').textContent = "poisson.ppf(q, mu=" + mean + ")";
-        document.getElementById('rvFormula').textContent = "poisson.rvs(mu=" + mean + ", size=N)";
+        pdfDescription.textContent = 'PMF (evaluated at x)';
+        
+        pdfFormula.textContent = "poisson.pmf(x, mu=" + mean + ")";
+        cdfFormula.textContent = "poisson.cdf(x, mu=" + mean + ")";
+        pctFormula.textContent = "poisson.ppf(q, mu=" + mean + ")";
+        rvFormula.textContent = "poisson.rvs(mu=" + mean + ", size=N)";
     }
 }
 
 function displayRFormula() {
     whichSyntax = 'r';
+    pyButton.classList.remove('btn-selected');
+    rButton.classList.add('btn-selected');
+    xlButton.classList.remove('btn-selected');
     document.getElementById('syntax').textContent = "R";
-    
-    if (whichDist === 'normal') {
-        document.getElementById('pdfFormula').textContent = "dnorm(x, mean=" + mean + ", sd=" + sd + ")";
-        document.getElementById('cdfFormula').textContent = "pnorm(x, mean=" + mean + ", sd=" + sd + ")";
-        document.getElementById('pctFormula').textContent = "qnorm(p, mean=" + mean + ", sd=" + sd + ")";
-        document.getElementById('rvFormula').textContent = "rnorm(N, mean=" + mean + ", sd=" + sd + ")";
-    }
-    
-    else {
-        document.getElementById('rButton').disabled = true;
-        displayPyFormula();
-    }
-}
+    document.getElementById('rvDescription').textContent = 'Draw N random variables';
 
-function displayJsFormula() {
-    whichSyntax = 'js';
-    document.getElementById('syntax').textContent = "JavaScript (jStat)";
-    document.getElementById('rvDescription').textContent = 'Draw one random variable'
-
-    if (whichDist === 'normal') {
-        document.getElementById('pdfFormula').textContent = "jStat.normal.pdf(x, mean=" + mean + ", std=" + sd + ")";
-        document.getElementById('cdfFormula').textContent = "jStat.normal.cdf(x, mean=" + mean + ", std=" + sd + ")";
-        document.getElementById('pctFormula').textContent = "jStat.normal.inv(p, mean=" + mean + ", std=" + sd + ")";
-        document.getElementById('rvFormula').textContent = "jStat.normal.sample(mean=" + mean + ", std=" + sd + ")";
+    if (whichDist === 'beta') {
+        let shape1 = -mean * (mean * mean - mean + _var) / _var;
+        let shape2 = (mean - 1) * (mean * mean - mean + _var) / _var;
+        pdfFormula.textContent = "dbeta(x, shape1=" + shape1 + ", shape2=" + shape2 + ")";
+        cdfFormula.textContent = "pbeta(x, shape1=" + shape1 + ", shape2=" + shape2 + ")";
+        pctFormula.textContent = "qbeta(q, shape1=" + shape1 + ", shape2=" + shape2 + ")";
+        rvFormula.textContent = "rbeta(n=N, shape1=" + shape1 + ", shape2=" + shape2 + ")";
     }
+    else if (whichDist === 'binomial') {
+        pdfDescription.textContent = 'PMF (evaluated at x)'
 
-    else {
-        document.getElementById('jsButton').disabled = true;
-        displayPyFormula();
+        let size = mean * mean / (mean - _var);
+        let prob = (1 - (_var / mean));
+        pdfFormula.textContent = "dbinom(x, size=" + size  + ", prob=" + prob + ")";
+        cdfFormula.textContent = "pbinom(x, size=" + size + ", prob=" + prob + ")";
+        pctFormula.textContent = "qbinom(q, size=" + size + ", prob=" + prob + ")";
+        rvFormula.textContent = "rbinom(n=N, size=" + size + ", prob=" + prob + ")";
+    }
+    else if (whichDist === 'exponential') {
+        let rate = 1 / mean;
+        pdfFormula.textContent = "dexp(x, rate=" + rate  + ")";
+        cdfFormula.textContent = "pexp(x, rate=" + rate + ")";
+        pctFormula.textContent = "qexp(q, rate=" + rate + ")";
+        rvFormula.textContent = "rexp(n=N, rate=" + rate + ")";
+    }
+    else if (whichDist === 'gamma') {
+        document.getElementById('syntax').textContent = "R (coming soon)";
+        clearFormulas();
+        // let a = (mean * mean) / _var;
+        // let scale = _var / mean;
+        // pdfFormula.textContent = "gamma.pdf(x, a=" + a + ", scale=" + scale + ")";
+        // cdfFormula.textContent = "gamma.cdf(x, a=" + a + ", scale=" + scale + ")";
+        // pctFormula.textContent = "gamma.ppf(q, a=" + a + ", scale=" + scale + ")";
+        // rvFormula.textContent = "gamma.rvs(a=" + a + ", scale=" + scale + ", size=N)";
+    }
+    else if (whichDist === 'folded normal') {
+        document.getElementById('syntax').textContent = "R (coming soon)";
+        clearFormulas();
+    //     pdfFormula.textContent = "foldnorm.pdf(x, scale=" + sd + ", c=" + mean / sd + ")";
+    //     cdfFormula.textContent = "foldnorm.cdf(x, scale=" + sd + ", c=" + mean / sd + ")";
+    //     pctFormula.textContent = "foldnorm.ppf(q, scale=" + sd + ", c=" + mean / sd + ")";
+    //     rvFormula.textContent = "foldnorm.rvs(scale=" + sd + ", c=" + mean / sd + ", size=N)";
+    }
+    else if (whichDist === 'negative binomial') {
+        pdfDescription.textContent = 'PMF (evaluated at x)'
+        
+        document.getElementById('syntax').textContent = "R (coming soon)";
+        clearFormulas();
+    //     let n = mean * mean / (_var - mean);
+    //     let p = mean / _var;
+    //     pdfFormula.textContent = "nbinom.pmf(x, n=" + n + ", p=" + p + ")";
+    //     cdfFormula.textContent = "nbinom.cdf(x, n=" + n + ", p=" + p + ")";
+    //     pctFormula.textContent = "nbinom.ppf(q, n=" + n + ", p=" + p + ")";
+    //     rvFormula.textContent = "nbinom.rvs(n=" + n + ", p=" + p + ", size=N)";
+    }
+    else if (whichDist === 'normal') {
+        pdfFormula.textContent = "dnorm(x, mean=" + mean + ", sd=" + sd + ")";
+        cdfFormula.textContent = "pnorm(x, mean=" + mean + ", sd=" + sd + ")";
+        pctFormula.textContent = "qnorm(p, mean=" + mean + ", sd=" + sd + ")";
+        rvFormula.textContent = "rnorm(n=N, mean=" + mean + ", sd=" + sd + ")";
+    }
+    else if (whichDist === 'poisson') {
+        pdfDescription.textContent = 'PMF (evaluated at x)';
+        
+        pdfFormula.textContent = "dpois(x, lambda=" + mean + ")";
+        cdfFormula.textContent = "ppois(x, lambda=" + mean + ")";
+        pctFormula.textContent = "qpois(p, lambda=" + mean + ")";
+        rvFormula.textContent = "rpois(n=N, lambda=" + mean + ")";
     }
 }
 
 function displayXlFormula() {
     whichSyntax = 'xl';
+    pyButton.classList.remove('btn-selected');
+    rButton.classList.remove('btn-selected');
+    xlButton.classList.add('btn-selected');
     document.getElementById('syntax').textContent = "Excel";
-    document.getElementById('rvDescription').textContent = 'Draw one random variable'
+    document.getElementById('rvDescription').textContent = 'Draw one random variable';
 
-    if (whichDist === 'normal') {
-        document.getElementById('pdfFormula').textContent = "norm.dist(x, "+ mean + ", " + sd + ", false)";
-        document.getElementById('cdfFormula').textContent = "norm.dist(x, "+ mean + ", " + sd + ", true)";
-        document.getElementById('pctFormula').textContent = "norm.inv(p, "+ mean + ", " + sd + ", false)";
-        document.getElementById('rvFormula').textContent = "";
+    if (whichDist === 'beta') {
+        let alpha = -mean * (mean * mean - mean + _var) / _var;
+        let beta = (mean - 1) * (mean * mean - mean + _var) / _var;
+        pdfFormula.textContent = "beta.dist(x, " + alpha + ", " + beta + ", false)";
+        cdfFormula.textContent = "beta.dist(x, " + alpha + ", " + beta + ", true)";
+        pctFormula.textContent = "beta.inv(p, " + alpha + ", " + beta + ", false)";
+        rvFormula.textContent = "";
+    }
+    else if (whichDist === 'binomial') {
+        let trials = mean * mean / (mean - _var);
+        let probability_s = (1 - (_var / mean));
+        pdfFormula.textContent = "binom.dist(x, " + trials + ", " + probability_s + ", false)";
+        cdfFormula.textContent = "binom.dist(x, " + trials + ", " + probability_s + ", true)";
+        pctFormula.textContent = "binom.inv(p, " + trials + ", " + probability_s + ", false)";
+        rvFormula.textContent = "";
+    }
+    else if (whichDist === 'exponential') {
+        let lambda = 1 / mean;
+        pdfFormula.textContent = "expon.dist(x, " + lambda + ", false)";
+        cdfFormula.textContent = "expon.dist(x, " + lambda + ", true)";
+        pctFormula.textContent = "";
+        rvFormula.textContent = "";
+    }
+    else if (whichDist === 'normal') {
+        pdfFormula.textContent = "norm.dist(x, " + mean + ", " + sd + ", false)";
+        cdfFormula.textContent = "norm.dist(x, " + mean + ", " + sd + ", true)";
+        pctFormula.textContent = "norm.inv(p, " + mean + ", " + sd + ", false)";
+        rvFormula.textContent = "";
+    }
+    else if (whichDist === 'poisson') {
+        pdfFormula.textContent = "poisson.dist(x, " + mean + ", false)";
+        cdfFormula.textContent = "poisson.dist(x, " + mean + ", true)";
+        pctFormula.textContent = "poisson.inv(p, " + mean + ", false)";
+        rvFormula.textContent = "";
     }
 
     else {
-        document.getElementById('xlButton').disabled = true;
-        displayPyFormula();
+        document.getElementById('syntax').textContent = "Excel (coming soon)";
+        clearFormulas();
     }
 }
+
+function clearFormulas() {
+    pdfFormula.textContent = '';
+    cdfFormula.textContent = '';
+    pctFormula.textContent = '';
+    rvFormula.textContent = '';
+}
+
+// var clipboard = new ClipboardJS('.btn-sm');
+
+// copyPdfButton.addEventListener('click', copyPdfFormula);
+// copyCdfButton.addEventListener('click', copyCdfFormula);
+// copyPctButton.addEventListener('click', copyPctFormula);
+// copyRvButton.addEventListener('click', copyRvFormula);
+
+// function copyPdfFormula() {
+//     pdfFormula.focus();
+//     pdfFormula.select();
+//     var successful = document.execCommand('copy');
+//     var msg = successful ? 'successful' : 'unsuccessful';
+//     console.log('Copying was ' + msg);
+// }

@@ -14,22 +14,19 @@ def home():
 def about():
     return render_template('about.html')
 
-# @app.route('/dist')
-# def guestbook():
-#     return render_template('dist.html')
-
 @app.route('/update-plot', methods=['POST'])
 def update_plot():
     req = request.get_json()
-    print('JS is sending as a request:')
-    print(req)
+    # print('JS is sending as a request:')
+    # print(req)
 
     dist = req['dist']
     mean = float(req['mean'])
     sd = float(req['sd'])
     plotThis = req['plotThis']
 
-    calc = {'binomial': calcBinomial,
+    calc = {'beta': calcBeta,
+            'binomial': calcBinomial,
             'exponential': calcExponential,
             'folded normal': calcFoldedNormal,
             'gamma': calcGamma,

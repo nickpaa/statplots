@@ -1,10 +1,19 @@
-from scipy.stats import binom, expon, foldnorm, gamma, nbinom, norm, poisson
+from scipy.stats import beta, binom, expon, foldnorm, gamma, nbinom, norm, poisson
 from numpy import linspace, arange, round, nan_to_num
 from math import floor, log
 from itertools import accumulate
 
 N_TICKS = 201
 
+
+def calcBeta(mean, sd, plotThis):
+    a = -mean * (mean**2 - mean + sd**2) / sd**2
+    b = (mean - 1) * (mean**2 - mean + sd**2) / sd**2
+    d = beta(a=a, b=b)
+
+    x = linspace(0, 1, num=201, endpoint=True)
+
+    return x, yContinuous(d, x, plotThis)
 
 def calcBinomial(mean, sd, plotThis):
     n = mean ** 2 / (mean - sd ** 2)
@@ -18,14 +27,12 @@ def calcBinomial(mean, sd, plotThis):
 def calcExponential(mean, sd, plotThis):
     scale = mean
     d = expon(scale=scale)
-    # mean = 1 / lambda = scale
     
     x = xContinuousZero(d)
     
     return x, yContinuous(d, x, plotThis)
 
 def calcFoldedNormal(mean, sd, plotThis):
-    # implied parameter loc=0; governs where fold happens
     scale = sd
     c = mean / sd
     d = foldnorm(scale=scale, c=c)
@@ -84,7 +91,7 @@ def xDiscreteZero(d):
 
 def yContinuous(d, x, plotThis):
     if plotThis == 'fx':
-        return d.pdf(x)
+        return nan_to_num(d.pdf(x), posinf=9999)
     else:
         return d.cdf(x)
 
@@ -93,13 +100,3 @@ def yDiscrete(d, x, plotThis):
         return d.pmf(x)
     else:
         return d.cdf(x)
-
-
-
-if __name__ == '__main__':
-    mean = 0
-    sd = 1
-    x, fx, Fx = calcNormal(mean, sd)
-    print(x)
-    print(fx)
-    print(Fx)

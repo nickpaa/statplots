@@ -15,6 +15,7 @@
                         <div class="form-group">
                             <label for="distField">Choose a distribution</label>
                             <select id="distField" class="form-control">
+                                <option value="beta">Beta</option>
                                 <option value="binomial">Binomial</option>
                                 <option value="exponential">Exponential</option>
                                 <option value="folded normal" disabled>Folded normal</option>
@@ -65,12 +66,12 @@
                             <div class="form-check-inline">
                                 <div class="custom-control custom-radio custom-control-inline">
                                     <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
-                                    <label class="custom-control-label" for="plotPDF">Plot PDF/PMF</label>
+                                    <label class="custom-control-label" for="plotPDF" id="plotPDFLabel">Plot PDF</label>
                                 </div>
                                 
                                 <div class="custom-control custom-radio custom-control-inline">
                                     <input type="radio" class="custom-control-input" id="plotCDF" name="whichPlot">
-                                    <label class="custom-control-label" for="plotCDF">Plot CDF</label>
+                                    <label class="custom-control-label" for="plotCDF" id="plotCDFLabel">Plot CDF</label>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +91,7 @@
                 <div class="btn-group" id="formulaButtons" hidden>
                     <button class="btn btn-outline-secondary" id="pyButton" type="button">Python</button>
                     <button class="btn btn-outline-secondary" id="rButton" type="button">R</button>
-                    <button class="btn btn-outline-secondary" id="jsButton" type="button">JavaScript</button>
+                    <!-- <button class="btn btn-outline-secondary" id="jsButton" type="button">JavaScript</button> -->
                     <button class="btn btn-outline-secondary" id="xlButton" type="button">Excel</button>
                 </div>
             </div>
@@ -100,24 +101,37 @@
                         <tr>
                             <th scope="col"></th>
                             <th scope="col" id="syntax"></th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th id="pdfpmf" scope="row">PDF (evaluated at x)</th>
-                            <td id="pdfFormula"></td>
+                            <th id="pdfDescription" scope="row">PDF (evaluated at x)</th>
+                            <td id="pdfFormula" value="test"></td>
+                            <td id="pdfCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="pdfCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">CDF (evaluated at x)</th>
                             <td id="cdfFormula"></td>
+                            <td id="cdfCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="cdfCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row">Percentile/quantile (evaluated at p or q)</th>
                             <td id="pctFormula"></td>
+                            <td id="pctCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="pctCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row" id="rvDescription">Draw N random variables</th>
                             <td id="rvFormula"></td>
+                            <td id="rvCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="rvCopyButton" type="button">Copy</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
