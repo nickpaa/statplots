@@ -3,8 +3,10 @@ let distHint = document.getElementById('distHint');
 let whichDist = 'normal';
 distField.addEventListener("change", function(){
     whichDist = distField.value;
-    giveHint(whichDist);
+    switchDist(whichDist);
 })
+
+// let transformRadios = document.getElementById('transformRadios');
 
 const meanField = document.getElementById('meanField');
 const meanFeedback = document.getElementById('meanFeedback');
@@ -63,7 +65,11 @@ function round(value, decimals) {
 
 // user inputs
 
-function giveHint(dist) {
+function switchDist(dist) {
+    distHint.textContent = '';
+    // transformRadios.hidden = true;
+    plotPDFLabel.textContent = 'Plot PDF';
+    
     if (dist === 'beta') {
         distHint.textContent = 'Mean must be between 0 and 1';
     }
@@ -74,6 +80,10 @@ function giveHint(dist) {
     else if (dist === 'exponential') {
         distHint.textContent = 'Mean and standard deviation must be equal';
     }
+    else if (dist === 'folded normal') {
+        // transformRadios.hidden = false;
+        distHint.textContent = 'Mean and SD/variance are pre-fold';
+    }
     else if (dist === 'negative binomial') {
         distHint.textContent = 'Mean must be less than variance';
         plotPDFLabel.textContent = 'Plot PMF';
@@ -82,8 +92,9 @@ function giveHint(dist) {
         distHint.textContent = 'Mean and variance must be equal';
         plotPDFLabel.textContent = 'Plot PMF';
     }
-    else {  // gamma, normal
-        distHint.textContent = '';
+    else if (dist === 'truncated normal') {
+        // transformRadios.hidden = false;
+        distHint.textContent = 'Mean and SD/variance are pre-truncation; truncate left tail at x=0';
     }
 }
 
@@ -225,18 +236,6 @@ function validateInputs() {
         }
     }
 
-    else if (whichDist === 'folded normal') {
-        if (mean <= 0) {
-            meanField.classList.add("is-invalid");
-            meanFeedback.textContent = 'Mean must be positive'
-            validInputs = false;
-        }
-        else {
-            meanField.classList.remove("is-invalid");
-            meanFeedback.textContent = '';
-        }
-    }
-
     else if (whichDist === 'gamma') {
         if (mean <= 0) {
             meanField.classList.add("is-invalid");
@@ -361,6 +360,7 @@ function drawPlot() {
         case 'folded normal':
         case 'gamma':
         case 'normal':
+        case 'truncated normal':
             type = 'line';
             // continuous = true;
             radius = 0;
@@ -520,10 +520,11 @@ function displayPyFormula() {
         rvFormula.textContent = "gamma.rvs(a=" + a + ", scale=" + scale + ", size=N)";
     }
     else if (whichDist === 'folded normal') {
-        pdfFormula.textContent = "foldnorm.pdf(x, scale=" + sd + ", c=" + mean / sd + ")";
-        cdfFormula.textContent = "foldnorm.cdf(x, scale=" + sd + ", c=" + mean / sd + ")";
-        pctFormula.textContent = "foldnorm.ppf(q, scale=" + sd + ", c=" + mean / sd + ")";
-        rvFormula.textContent = "foldnorm.rvs(scale=" + sd + ", c=" + mean / sd + ", size=N)";
+        c = Math.abs(mean) / sd;
+        pdfFormula.textContent = "foldnorm.pdf(x, scale=" + sd + ", c=" + c + ")";
+        cdfFormula.textContent = "foldnorm.cdf(x, scale=" + sd + ", c=" + c + ")";
+        pctFormula.textContent = "foldnorm.ppf(q, scale=" + sd + ", c=" + c + ")";
+        rvFormula.textContent = "foldnorm.rvs(scale=" + sd + ", c=" + c + ", size=N)";
     }
     else if (whichDist === 'negative binomial') {
         pdfDescription.textContent = 'PMF (evaluated at x)'
@@ -548,6 +549,14 @@ function displayPyFormula() {
         cdfFormula.textContent = "poisson.cdf(x, mu=" + mean + ")";
         pctFormula.textContent = "poisson.ppf(q, mu=" + mean + ")";
         rvFormula.textContent = "poisson.rvs(mu=" + mean + ", size=N)";
+    }
+    else if (whichDist === 'truncated normal') {
+        a = (0 - mean) / sd;
+        b = (99999 - mean) / sd;
+        pdfFormula.textContent = "truncnorm.pdf(x, loc=" + mean + ", scale=" + sd + ", a=" + a + ", b=" + b + ")";
+        cdfFormula.textContent = "truncnorm.cdf(x, loc=" + mean + ", scale=" + sd + ", a=" + a + ", b=" + b + ")";
+        pctFormula.textContent = "truncnorm.ppf(q, loc=" + mean + ", scale=" + sd + ", a=" + a + ", b=" + b + ")";
+        rvFormula.textContent = "truncnorm.rvs(loc=" + mean + ", scale=" + sd + ", a=" + a + ", b=" + b + ", size=N)";
     }
 }
 

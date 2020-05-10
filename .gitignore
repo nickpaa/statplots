@@ -1,3 +1,5 @@
-statplots/__pycache__/__init__.cpython-38.pyc
-statplots/__pycache__/routes.cpython-38.pyc
-statplots/__pycache__/distributions.cpython-38.pyc
+statplots/__pycache__/
+statplots/.ipynb_checkpoints/
+statplots/notebooks/
+notebooks/scipy.foldnorm.ipynb
+notebooks/.ipynb_checkpoints/scipy.foldnorm-checkpoint.ipynb

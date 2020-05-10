@@ -32,7 +32,8 @@ def update_plot():
             'gamma': calcGamma,
             'negative binomial': calcNegativeBinomial,
             'normal': calcNormal, 
-            'poisson': calcPoisson}
+            'poisson': calcPoisson,
+            'truncated normal': calcTruncatedNormal,}
 
     x, y = calc[dist](mean, sd, plotThis)
     stats = {'x':x.tolist(), 'y':y.tolist()}
