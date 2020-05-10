@@ -1,4 +1,4 @@
-from scipy.stats import beta, binom, expon, foldnorm, gamma, nbinom, norm, poisson
+from scipy.stats import beta, binom, expon, foldnorm, gamma, nbinom, norm, poisson, truncnorm
 from numpy import linspace, arange, round, nan_to_num
 from math import floor, log
 from itertools import accumulate
@@ -34,7 +34,7 @@ def calcExponential(mean, sd, plotThis):
 
 def calcFoldedNormal(mean, sd, plotThis):
     scale = sd
-    c = mean / sd
+    c = abs(mean) / sd
     d = foldnorm(scale=scale, c=c)
 
     x = xContinuousZero(d)
@@ -77,6 +77,17 @@ def calcPoisson(mean, sd, plotThis):
     x = xDiscreteZero(d)
     
     return x, yDiscrete(d, x, plotThis)
+
+def calcTruncatedNormal(mean, sd, plotThis):
+    loc = mean
+    scale = sd
+    a = (0 - mean) / sd
+    b = (99999 - mean) / sd
+    d = truncnorm(loc=loc, scale=scale, a=a, b=b)
+
+    x = xContinuousZero(d)
+
+    return x, yContinuous(d, x, plotThis)
 
 def xContinuousZero(d):
     maxx = d.ppf(0.999)
