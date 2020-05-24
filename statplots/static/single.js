@@ -295,10 +295,6 @@ function validateInputs() {
 
 update.onclick = submitParams;
 
-// function updatePage() {
-//     submitParams();
-// }
-
 async function submitParams() {
 
     if (!validateInputs()) {
@@ -315,7 +311,6 @@ async function submitParams() {
         plotThis: plotThis
     }
 
-    // console.log('fetching');
     fetch('/update-plot', {
             method: 'POST',
             body: JSON.stringify(params),
@@ -325,25 +320,17 @@ async function submitParams() {
         })
     .then(response => response.json())
     .then(data => {
-        // console.log('Python is sending as a response:');
-        // console.log(data);
         setArrays(data);
     });
-    // .then(drawPlot());
-
-    // drawPlot();
 }
 
 function setArrays(data) {
-    // console.log('setting arrays');
     x = data['x'];
     y = data['y'];
     drawPlot();
 }
 
 function drawPlot() {
-
-    // console.log('drawing plot');
 
     ////////////////////
     // maintenance stuff
@@ -454,9 +441,6 @@ function drawPlot() {
         case 'r':
             displayRFormula();
             break;
-        // case 'js':
-        //     displayJsFormula();
-        //     break;
         case 'xl':
             displayXlFormula();
             break;
@@ -470,7 +454,6 @@ function drawPlot() {
 
 pyButton.addEventListener('click', displayPyFormula);
 rButton.addEventListener('click', displayRFormula);
-// jsButton.addEventListener('click', displayJsFormula);
 xlButton.addEventListener('click', displayXlFormula);
 
 let pdfDescription = document.getElementById('pdfDescription');
@@ -485,6 +468,7 @@ function displayPyFormula() {
     rButton.classList.remove('btn-selected');
     xlButton.classList.remove('btn-selected');
     document.getElementById('syntax').textContent = "Python (scipy.stats)";
+    document.getElementById('pctDescription').textContent = 'Percentile (evaluated at q)';
     document.getElementById('rvDescription').textContent = 'Draw N random variables';
 
     if (whichDist === 'beta') {
@@ -566,6 +550,7 @@ function displayRFormula() {
     rButton.classList.add('btn-selected');
     xlButton.classList.remove('btn-selected');
     document.getElementById('syntax').textContent = "R";
+    document.getElementById('pctDescription').textContent = 'Percentile (evaluated at p)';
     document.getElementById('rvDescription').textContent = 'Draw N random variables';
 
     if (whichDist === 'beta') {
@@ -596,32 +581,16 @@ function displayRFormula() {
     else if (whichDist === 'gamma') {
         document.getElementById('syntax').textContent = "R (coming soon)";
         clearFormulas();
-        // let a = (mean * mean) / _var;
-        // let scale = _var / mean;
-        // pdfFormula.textContent = "gamma.pdf(x, a=" + a + ", scale=" + scale + ")";
-        // cdfFormula.textContent = "gamma.cdf(x, a=" + a + ", scale=" + scale + ")";
-        // pctFormula.textContent = "gamma.ppf(q, a=" + a + ", scale=" + scale + ")";
-        // rvFormula.textContent = "gamma.rvs(a=" + a + ", scale=" + scale + ", size=N)";
     }
     else if (whichDist === 'folded normal') {
         document.getElementById('syntax').textContent = "R (coming soon)";
         clearFormulas();
-    //     pdfFormula.textContent = "foldnorm.pdf(x, scale=" + sd + ", c=" + mean / sd + ")";
-    //     cdfFormula.textContent = "foldnorm.cdf(x, scale=" + sd + ", c=" + mean / sd + ")";
-    //     pctFormula.textContent = "foldnorm.ppf(q, scale=" + sd + ", c=" + mean / sd + ")";
-    //     rvFormula.textContent = "foldnorm.rvs(scale=" + sd + ", c=" + mean / sd + ", size=N)";
     }
     else if (whichDist === 'negative binomial') {
         pdfDescription.textContent = 'PMF (evaluated at x)'
         
         document.getElementById('syntax').textContent = "R (coming soon)";
         clearFormulas();
-    //     let n = mean * mean / (_var - mean);
-    //     let p = mean / _var;
-    //     pdfFormula.textContent = "nbinom.pmf(x, n=" + n + ", p=" + p + ")";
-    //     cdfFormula.textContent = "nbinom.cdf(x, n=" + n + ", p=" + p + ")";
-    //     pctFormula.textContent = "nbinom.ppf(q, n=" + n + ", p=" + p + ")";
-    //     rvFormula.textContent = "nbinom.rvs(n=" + n + ", p=" + p + ", size=N)";
     }
     else if (whichDist === 'normal') {
         pdfFormula.textContent = "dnorm(x, mean=" + mean + ", sd=" + sd + ")";
@@ -645,6 +614,7 @@ function displayXlFormula() {
     rButton.classList.remove('btn-selected');
     xlButton.classList.add('btn-selected');
     document.getElementById('syntax').textContent = "Excel";
+    document.getElementById('pctDescription').textContent = 'Percentile (evaluated at alpha)'
     document.getElementById('rvDescription').textContent = 'Draw one random variable';
 
     if (whichDist === 'beta') {
@@ -652,7 +622,7 @@ function displayXlFormula() {
         let beta = (mean - 1) * (mean * mean - mean + _var) / _var;
         pdfFormula.textContent = "beta.dist(x, " + alpha + ", " + beta + ", false)";
         cdfFormula.textContent = "beta.dist(x, " + alpha + ", " + beta + ", true)";
-        pctFormula.textContent = "beta.inv(p, " + alpha + ", " + beta + ", false)";
+        pctFormula.textContent = "beta.inv(" + alpha + ", " + beta + ", alpha)";
         rvFormula.textContent = "";
     }
     else if (whichDist === 'binomial') {
@@ -660,7 +630,7 @@ function displayXlFormula() {
         let probability_s = (1 - (_var / mean));
         pdfFormula.textContent = "binom.dist(x, " + trials + ", " + probability_s + ", false)";
         cdfFormula.textContent = "binom.dist(x, " + trials + ", " + probability_s + ", true)";
-        pctFormula.textContent = "binom.inv(p, " + trials + ", " + probability_s + ", false)";
+        pctFormula.textContent = "binom.inv(" + trials + ", " + probability_s + ", alpha)";
         rvFormula.textContent = "";
     }
     else if (whichDist === 'exponential') {
@@ -673,13 +643,13 @@ function displayXlFormula() {
     else if (whichDist === 'normal') {
         pdfFormula.textContent = "norm.dist(x, " + mean + ", " + sd + ", false)";
         cdfFormula.textContent = "norm.dist(x, " + mean + ", " + sd + ", true)";
-        pctFormula.textContent = "norm.inv(p, " + mean + ", " + sd + ", false)";
+        pctFormula.textContent = "norm.inv(" + mean + ", " + sd + ", alpha)";
         rvFormula.textContent = "";
     }
     else if (whichDist === 'poisson') {
         pdfFormula.textContent = "poisson.dist(x, " + mean + ", false)";
         cdfFormula.textContent = "poisson.dist(x, " + mean + ", true)";
-        pctFormula.textContent = "poisson.inv(p, " + mean + ", false)";
+        pctFormula.textContent = "poisson.inv(" + mean + ", alpha)";
         rvFormula.textContent = "";
     }
 
