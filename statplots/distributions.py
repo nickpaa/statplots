@@ -127,8 +127,18 @@ def twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis):
 
     if (distmap[dist1][1] == 'disc' and distmap[dist2][1] == 'disc'):
         x = arange(minx, maxx + 1, 1)
-    else:
+    elif (distmap[dist1][1] == 'cont' and distmap[dist2][1] == 'cont'):
         step = round(maxx - minx, -round(floor(log(maxx - minx, 10)))) / (N_TICKS - 1)
+        x = round(arange(minx, maxx + step, step), 6)
+    else:  # mixed types
+        if maxx < 50:
+            step = round(maxx - minx, -round(floor(log(maxx - minx, 10)))) / (N_TICKS - 1)
+        elif maxx < 75:
+            step = 0.25
+        elif maxx < 100:
+            step = 0.5
+        else:
+            step = 1
         x = round(arange(minx, maxx + step, step), 6)
     
     _, y1 = distmap[dist1][0](mean1, sd1, plotThis, x)
@@ -138,17 +148,3 @@ def twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis):
     type2 = distmap[dist2][1]
 
     return x, y1, y2, type1, type2
-
-
-# if __name__ == '__main__':
-#     dist1 = 'normal'
-#     mean1 = 0
-#     sd1 = 1
-#     dist2 = 'normal'
-#     mean2 = 1
-#     sd2 = 2
-#     plotThis = 'pdf'
-#     x, y1, y2 = twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis)
-#     print(f'x: {x[:5]}')
-#     print(f'y1: {y1[:5]}')
-#     print(f'y2: {y2[:5]}')
