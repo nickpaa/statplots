@@ -7,8 +7,13 @@ from statplots.distributions import *
 
 @app.route('/')
 @app.route('/home')
+@app.route('/single')
 def home():
-    return render_template('home.html')
+    return render_template('single.html')
+
+@app.route('/compare')
+def compare():
+    return render_template('compare.html')
 
 @app.route('/about')
 def about():
@@ -17,29 +22,39 @@ def about():
 @app.route('/update-plot', methods=['POST'])
 def update_plot():
     req = request.get_json()
-    # print('JS is sending as a request:')
-    # print(req)
 
     dist = req['dist']
     mean = float(req['mean'])
     sd = float(req['sd'])
     plotThis = req['plotThis']
 
-    calc = {'beta': calcBeta,
-            'binomial': calcBinomial,
-            'exponential': calcExponential,
-            'folded normal': calcFoldedNormal,
-            'gamma': calcGamma,
-            'negative binomial': calcNegativeBinomial,
-            'normal': calcNormal, 
-            'poisson': calcPoisson,
-            'truncated normal': calcTruncatedNormal,}
-
-    x, y = calc[dist](mean, sd, plotThis)
+    # not refactored to use type1 in JS yet
+    x, y, type1 = oneDistribution(dist, mean, sd, plotThis)
     stats = {'x':x.tolist(), 'y':y.tolist()}
     
     res = make_response(jsonify(stats), 200)
     return res
+
+@app.route('/update-plot-compare', methods=['POST'])
+def update_plot_compare():
+    req = request.get_json()
+
+    dist1 = req['params1']['dist']
+    mean1 = float(req['params1']['mean'])
+    sd1 = float(req['params1']['sd'])
+
+    dist2 = req['params2']['dist']
+    mean2 = float(req['params2']['mean'])
+    sd2 = float(req['params2']['sd'])
+
+    plotThis = req['plotThis']
+
+    x, y1, y2, type1, type2 = twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis)
+    stats = {'x':x.tolist(), 'y1':y1.tolist(), 'y2':y2.tolist(), 'type1':type1, 'type2':type2}
+    
+    res = make_response(jsonify(stats), 200)
+    return res
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -293,11 +293,11 @@ function validateInputs() {
     return validInputs;
 }
 
-update.onclick = updatePage;
+update.onclick = submitParams;
 
-function updatePage() {
-    submitParams();
-}
+// function updatePage() {
+//     submitParams();
+// }
 
 async function submitParams() {
 

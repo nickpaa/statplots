@@ -1,0 +1,241 @@
+{% extends "layout.html" %}
+{% block content %}
+
+        <div class="container">
+        
+            <div class="row">
+                <div class="col">
+                    <p id="intro" class="text-center">Plot a statistical distribution in terms of mean and variance, and get code to recreate the distribution</p>
+                </div>
+            </div>
+        
+            <div class="row">
+                <!-- FIRST DISTRIBUTION -->
+                <div class="col-md-3">
+                    <form id="inputs1">
+                        <div class="form-group">
+                            <label for="distField">Distribution 1</label>
+                            <select id="distField" class="form-control">
+                                <option value="beta">Beta</option>
+                                <option value="binomial">Binomial</option>
+                                <option value="exponential">Exponential</option>
+                                <option value="folded normal">Folded normal</option>
+                                <option value="gamma">Gamma</option>
+                                <option value="negative binomial">Negative binomial</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="poisson">Poisson</option>
+                                <option value="truncated normal">Truncated normal</option>
+                            </select>
+                            <small id="distHint"></small>
+                        </div>
+
+                        <!-- <div class="form-group" id="transformRadios" hidden>
+                            <div class="form-check-inline">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="preTransform" name="transform" checked>
+                                    <label class="custom-control-label" for="preTransform" id="preTransformLabel">&mu; and &sigma; pre-fold</label>
+                                </div>
+                                
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="postTransform" name="transform">
+                                    <label class="custom-control-label" for="postTransform" id="postTransformLabel">&mu; and &sigma; post-fold</label>
+                                </div>
+                            </div>
+                        </div> -->
+                        
+                        <div class="form-group">
+                            <label for="meanField">Mean (&mu;)</label>
+                            <input id="meanField" type="text" class="form-control" value="0">
+                            <div id="meanFeedback" class="invalid-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            
+                            <div class="form-check">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useSD" name="whichSigma" checked>
+                                    <label class="custom-control-label" for="useSD">Standard deviation (&sigma;)</label>
+                                    <input id="sdField" type="text" class="form-control" value="1">
+                                    <div id="sdFeedback" class="invalid-feedback"></div>
+                                </div>
+                                
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useVar" name="whichSigma">
+                                    <label class="custom-control-label" for="useVar">Variance (&sigma;<sup>2</sup>)</label>
+                                    <input id="varField" type="text" class="form-control" value="1" disabled>
+                                    <div id="varFeedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <!-- <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
+                            <label for="sdField">Standard deviation</label>
+                            <input id="sdField" type="text" class="form-control" value="1">
+                            <div id="sdFeedback" class="invalid-feedback"></div>
+
+                            <input type="radio" id="useVar" name="whichSigma" value="Var">
+                            <label for="varField">Variance</label>
+                            <input id="varField" type="text" class="form-control" value="1" disabled>
+                            <div id="varFeedback" class="invalid-feedback"></div> -->
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check-inline">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
+                                    <label class="custom-control-label" for="plotPDF" id="plotPDFLabel">Plot PDF</label>
+                                </div>
+                                
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="plotCDF" name="whichPlot">
+                                    <label class="custom-control-label" for="plotCDF" id="plotCDFLabel">Plot CDF</label>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="form-group">
+                            <button class="btn btn-outline-secondary" id="update" type="button">Update</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- SECOND DISTRIBUTION -->
+                <div class="col-md-3">
+                    <form id="inputs2">
+                        <div class="form-group">
+                            <label for="distField">Distribution 2</label>
+                            <select id="distField2" class="form-control">
+                                <option value="beta">Beta</option>
+                                <option value="binomial">Binomial</option>
+                                <option value="exponential">Exponential</option>
+                                <option value="folded normal">Folded normal</option>
+                                <option value="gamma">Gamma</option>
+                                <option value="negative binomial">Negative binomial</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="poisson">Poisson</option>
+                                <option value="truncated normal">Truncated normal</option>
+                            </select>
+                            <small id="distHint2"></small>
+                        </div>
+
+                        <!-- <div class="form-group" id="transformRadios" hidden>
+                            <div class="form-check-inline">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="preTransform" name="transform" checked>
+                                    <label class="custom-control-label" for="preTransform" id="preTransformLabel">&mu; and &sigma; pre-fold</label>
+                                </div>
+                                
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" class="custom-control-input" id="postTransform" name="transform">
+                                    <label class="custom-control-label" for="postTransform" id="postTransformLabel">&mu; and &sigma; post-fold</label>
+                                </div>
+                            </div>
+                        </div> -->
+                        
+                        <div class="form-group">
+                            <label for="meanField">Mean (&mu;)</label>
+                            <input id="meanField2" type="text" class="form-control" value="0">
+                            <div id="meanFeedback2" class="invalid-feedback"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            
+                            <div class="form-check">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useSD2" name="whichSigma2" checked>
+                                    <label class="custom-control-label" for="useSD2">Standard deviation (&sigma;)</label>
+                                    <input id="sdField2" type="text" class="form-control" value="1">
+                                    <div id="sdFeedback2" class="invalid-feedback"></div>
+                                </div>
+                                
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" id="useVar2" name="whichSigma2">
+                                    <label class="custom-control-label" for="useVar2">Variance (&sigma;<sup>2</sup>)</label>
+                                    <input id="varField2" type="text" class="form-control" value="1" disabled>
+                                    <div id="varFeedback2" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <!-- <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
+                            <label for="sdField">Standard deviation</label>
+                            <input id="sdField" type="text" class="form-control" value="1">
+                            <div id="sdFeedback" class="invalid-feedback"></div>
+
+                            <input type="radio" id="useVar" name="whichSigma" value="Var">
+                            <label for="varField">Variance</label>
+                            <input id="varField" type="text" class="form-control" value="1" disabled>
+                            <div id="varFeedback" class="invalid-feedback"></div> -->
+                        </div>
+                    </form>
+                </div>
+            
+                <div class="col-md-6">
+                    <canvas id="chart"></canvas>
+                </div>
+            
+            </div>
+
+            <div class="row">
+                <div class="btn-group" id="formulaButtons" hidden>
+                    <button class="btn btn-outline-secondary" id="pyButton" type="button">Python</button>
+                    <button class="btn btn-outline-secondary" id="rButton" type="button">R</button>
+                    <button class="btn btn-outline-secondary" id="xlButton" type="button">Excel</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <table class="table table-bordered" id="formulaTable" hidden>
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col" id="syntax"></th>
+                            <th scope="col"></th>
+                            <!-- <th scope="col"></th> -->
+                        </tr>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Distribution 1</th>
+                            <th scope="col">Distribution 2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th id="pdfDescription" scope="row">PDF (evaluated at x)</th>
+                            <td id="pdfFormula1"></td>
+                            <td id="pdfFormula2"></td>
+                            <!-- <td id="pdfCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="pdfCopyButton" type="button">Copy</button>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <th scope="row">CDF (evaluated at x)</th>
+                            <td id="cdfFormula1"></td>
+                            <td id="cdfFormula2"></td>
+                            <!-- <td id="cdfCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="cdfCopyButton" type="button">Copy</button>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <th scope="row">Percentile/quantile (evaluated at p or q)</th>
+                            <td id="pctFormula1"></td>
+                            <td id="pctFormula2"></td>
+                            <!-- <td id="pctCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="pctCopyButton" type="button">Copy</button>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <th scope="row" id="rvDescription">Draw N random variables</th>
+                            <td id="rvFormula1"></td>
+                            <td id="rvFormula2"></td>
+                            <!-- <td id="rvCopy">
+                                <button class="btn btn-sm btn-outline-secondary" id="rvCopyButton" type="button">Copy</button>
+                            </td> -->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+{% endblock content %}
+
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='compare.js') }}" ></script>
+{% endblock %}
