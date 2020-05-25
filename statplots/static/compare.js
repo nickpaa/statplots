@@ -1,5 +1,12 @@
-document.getElementById('inputs1').reset();
-document.getElementById('inputs2').reset();
+// import validateInputs from './validations.js';
+
+function resetForm() {
+    document.getElementById('inputs1').reset();
+    document.getElementById('inputs2').reset();
+}
+
+resetForm();
+
 
 // SHARED ELEMENTS
 
@@ -136,9 +143,6 @@ function updateMean(d) {
     }
 }
 
-dists.forEach(d => {
-    d.meanField.addEventListener('blur', () => updateMean(d));
-})
 
 
 // SD AND VAR UPDATES
@@ -169,16 +173,7 @@ function updateSigmas(d) {
     }
 }
 
-dists.forEach(d => {
 
-    // radio toggles
-    d.useSD.addEventListener('click', () => toggleSigmaRadios(d));
-    d.useVar.addEventListener('click', () => toggleSigmaRadios(d));
-    
-    // update and link values
-    d.sdField.addEventListener('blur', () => updateSigmas(d));
-    d.varField.addEventListener('blur', () => updateSigmas(d));
-})
 
 
 //// SHARED ELEMENTS
@@ -193,9 +188,6 @@ function updateWhichPlot() {
         plotThis = 'Fx';
     }
 }
-
-plotPDF.addEventListener('click', updateWhichPlot);
-plotCDF.addEventListener('click', updateWhichPlot);
 
 
 // SUBMIT AND VALIDATE
@@ -337,7 +329,26 @@ function validateInputs(d) {
     return d.inputsValid;
 }
 
-update.addEventListener('click', () => submitParams(dists));
+function addListeners(dists) {
+    dists.forEach(d => {
+        d.meanField.addEventListener('blur', () => updateMean(d));
+    });
+    dists.forEach(d => {
+    
+        // radio toggles
+        d.useSD.addEventListener('click', () => toggleSigmaRadios(d));
+        d.useVar.addEventListener('click', () => toggleSigmaRadios(d));
+        
+        // update and link values
+        d.sdField.addEventListener('blur', () => updateSigmas(d));
+        d.varField.addEventListener('blur', () => updateSigmas(d));
+    });
+    plotPDF.addEventListener('click', updateWhichPlot);
+    plotCDF.addEventListener('click', updateWhichPlot);
+    update.addEventListener('click', () => submitParams(dists));
+}
+
+addListeners(dists);
 
 async function submitParams(dists) {
 
@@ -382,11 +393,6 @@ async function submitParams(dists) {
     });
 }
 
-let x = [];
-let y1 = [];
-let y2 = [];
-let type1;
-let type2;
 
 function setArrays(data) {
     x = data['x'];
@@ -525,12 +531,8 @@ function drawPlot() {
         }
     })
 
-    if (y1[0] === 9999) {
-        chart.options.scales.yAxes[0].ticks.max = y1[1] * 2;
-        chart.update();
-    }
-    if (y2[0] === 9999) {
-        chart.options.scales.yAxes[0].ticks.max = y2[1] * 2;
+    if (y1[0] === 9999 || y1.slice(-1)[0] === 9999 || y2[0] === 9999 || y2.slice(-1)[0] === 9999) {
+        chart.options.scales.yAxes[0].ticks.max = round(Math.max(y1[1], y1.slice(-2)[0], y2[1], y2.slice(-2)[0]) * 1.5, 0);
         chart.update();
     }
 
