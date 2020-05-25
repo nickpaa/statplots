@@ -421,8 +421,8 @@ function drawPlot() {
         }
     })
 
-    if (y[0] === 9999) {
-        chart.options.scales.yAxes[0].ticks.max = y[1] * 2;
+    if (y[0] === 9999 || y.slice(-1)[0] === 9999) {
+        chart.options.scales.yAxes[0].ticks.max = round(Math.max(y[1], y.slice(-2)[0]) * 1.5, 0);
         chart.update();
     }
     
