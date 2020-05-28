@@ -28,6 +28,14 @@
     margin-top: 20px;
 }
 
+.col {
+    border: 1px solid blue;
+}
+
+.container {
+    border: 1px solid green;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
 }
