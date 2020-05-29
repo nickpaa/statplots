@@ -10,11 +10,13 @@
             </div>
         
             <div class="row">
+                
                 <div class="col-md-6">
-                    <div class="row">
-                        <!-- FIRST DISTRIBUTION -->
-                        <div class="col col-md-6">
-                            <form id="inputs1">
+                    <form id="inputs">
+                        <div class="row">
+                            <!-- FIRST DISTRIBUTION -->
+                            <div class="col-md-6">
+                            
                                 <div class="form-group">
                                     <label for="distField">Distribution 1</label>
                                     <select id="distField" class="form-control">
@@ -30,20 +32,6 @@
                                     </select>
                                     <small id="distHint"></small>
                                 </div>
-
-                                <!-- <div class="form-group" id="transformRadios" hidden>
-                                    <div class="form-check-inline">
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" class="custom-control-input" id="preTransform" name="transform" checked>
-                                            <label class="custom-control-label" for="preTransform" id="preTransformLabel">&mu; and &sigma; pre-fold</label>
-                                        </div>
-                                        
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" class="custom-control-input" id="postTransform" name="transform">
-                                            <label class="custom-control-label" for="postTransform" id="postTransformLabel">&mu; and &sigma; post-fold</label>
-                                        </div>
-                                    </div>
-                                </div> -->
                                 
                                 <div class="form-group">
                                     <label for="meanField">Mean (&mu;)</label>
@@ -68,24 +56,12 @@
                                             <div id="varFeedback" class="invalid-feedback"></div>
                                         </div>
                                     </div>
-
-                                    <!-- <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
-                                    <label for="sdField">Standard deviation</label>
-                                    <input id="sdField" type="text" class="form-control" value="1">
-                                    <div id="sdFeedback" class="invalid-feedback"></div>
-
-                                    <input type="radio" id="useVar" name="whichSigma" value="Var">
-                                    <label for="varField">Variance</label>
-                                    <input id="varField" type="text" class="form-control" value="1" disabled>
-                                    <div id="varFeedback" class="invalid-feedback"></div> -->
                                 </div>
+                            </div>
+                            <!-- END FIRST DISTRIBUTION -->
 
-                            </form>
-                        </div>
-
-                        <!-- SECOND DISTRIBUTION -->
-                        <div class="col-md-6">
-                            <form id="inputs2">
+                            <!-- SECOND DISTRIBUTION -->
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="distField">Distribution 2</label>
                                     <select id="distField2" class="form-control">
@@ -102,20 +78,6 @@
                                     <small id="distHint2"></small>
                                 </div>
 
-                                <!-- <div class="form-group" id="transformRadios" hidden>
-                                    <div class="form-check-inline">
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" class="custom-control-input" id="preTransform" name="transform" checked>
-                                            <label class="custom-control-label" for="preTransform" id="preTransformLabel">&mu; and &sigma; pre-fold</label>
-                                        </div>
-                                        
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" class="custom-control-input" id="postTransform" name="transform">
-                                            <label class="custom-control-label" for="postTransform" id="postTransformLabel">&mu; and &sigma; post-fold</label>
-                                        </div>
-                                    </div>
-                                </div> -->
-                                
                                 <div class="form-group">
                                     <label for="meanField">Mean (&mu;)</label>
                                     <input id="meanField2" type="text" class="form-control" value="0">
@@ -139,38 +101,30 @@
                                             <div id="varFeedback2" class="invalid-feedback"></div>
                                         </div>
                                     </div>
-
-                                    <!-- <input type="radio" id="useSD" name="whichSigma" value="SD" checked>
-                                    <label for="sdField">Standard deviation</label>
-                                    <input id="sdField" type="text" class="form-control" value="1">
-                                    <div id="sdFeedback" class="invalid-feedback"></div>
-
-                                    <input type="radio" id="useVar" name="whichSigma" value="Var">
-                                    <label for="varField">Variance</label>
-                                    <input id="varField" type="text" class="form-control" value="1" disabled>
-                                    <div id="varFeedback" class="invalid-feedback"></div> -->
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="row d-flex align-items-center">
-                        <div class="col-sm-8">
-                            <div class="form-check-inline">
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
-                                    <label class="custom-control-label" for="plotPDF" id="plotPDFLabel">Plot PDF/PMF</label>
-                                </div>
-                                
-                                <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" class="custom-control-input" id="plotCDF" name="whichPlot">
-                                    <label class="custom-control-label" for="plotCDF" id="plotCDFLabel">Plot CDF</label>
                                 </div>
                             </div>
+                            <!-- END SECOND DISTRIBUTION -->
                         </div>
-                        <div class="col-sm-4 d-flex justify-content-end">
-                            <button class="btn btn-outline-secondary" id="update" type="button">Update</button>
+
+                        <div class="row d-flex align-items-center">
+                            <div class="col-sm-8">
+                                <div class="form-check-inline">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" id="plotPDF" name="whichPlot" checked>
+                                        <label class="custom-control-label" for="plotPDF" id="plotPDFLabel">Plot PDF/PMF</label>
+                                    </div>
+                                    
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" id="plotCDF" name="whichPlot">
+                                        <label class="custom-control-label" for="plotCDF" id="plotCDFLabel">Plot CDF</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 d-flex justify-content-end">
+                                <button class="btn btn-outline-secondary" id="update" type="button">Update</button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 
                 <div class="col-md-6">

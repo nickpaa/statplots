@@ -1,14 +1,9 @@
-// import validateInputs from './validations.js';
-
 function resetForm() {
-    document.getElementById('inputs1').reset();
-    document.getElementById('inputs2').reset();
+    document.getElementById('inputs').reset();
 }
-
 resetForm();
 
-
-// SHARED ELEMENTS
+//// SHARED ELEMENTS
 
 const whichPlot = document.getElementsByName('whichPlot');
 const plotPDF = document.getElementById('plotPDF');
@@ -98,6 +93,7 @@ dist2 = new Distribution(
 
 dists = [dist1, dist2];
 
+
 // DISTRIBUION UPDATES
 
 dists.forEach(d => {
@@ -133,6 +129,7 @@ function switchDist(d) {
     }
 }
 
+
 // MEAN UPDATES
 
 function updateMean(d) {
@@ -142,7 +139,6 @@ function updateMean(d) {
         d.meanField.value = '0';
     }
 }
-
 
 
 // SD AND VAR UPDATES
@@ -174,8 +170,6 @@ function updateSigmas(d) {
 }
 
 
-
-
 //// SHARED ELEMENTS
 
 // PDF/CDF toggle
@@ -195,6 +189,12 @@ function updateWhichPlot() {
 function validateInputs(d) {
     
     d.inputsValid = true;
+    d.meanFeedback.textContent = '';
+    d.meanField.classList.remove("is-invalid");
+    d.sdFeedback.textContent = '';
+    d.sdField.classList.remove("is-invalid");
+    d.varFeedback.textContent = '';
+    d.varField.classList.remove("is-invalid");
 
     // all dists: check that SD is positive
     if (d.sd <= 0) {
@@ -343,9 +343,21 @@ function addListeners(dists) {
         d.sdField.addEventListener('blur', () => updateSigmas(d));
         d.varField.addEventListener('blur', () => updateSigmas(d));
     });
+
+    // not dist specific
     plotPDF.addEventListener('click', updateWhichPlot);
     plotCDF.addEventListener('click', updateWhichPlot);
+
     update.addEventListener('click', () => submitParams(dists));
+
+    // submit on enter key press
+    document.addEventListener('keyup', (e) => {
+        if (e.keyCode === 13) {
+            dists.forEach(d => updateMean(d));
+            dists.forEach(d => updateSigmas(d));
+            submitParams(dists);
+        }
+    })
 }
 
 addListeners(dists);
@@ -353,7 +365,7 @@ addListeners(dists);
 async function submitParams(dists) {
 
     d1 = dists[0];
-    d2 = dists[1]
+    d2 = dists[1];
 
     if (!validateInputs(d1) || !validateInputs(d2)) {
         formulaButtons.hidden = true;

@@ -81,7 +81,6 @@ def calcTruncatedNormal(mean, sd, plotThis, x=None):
 def xContinuousZero(d):
     maxx = d.ppf(0.999)
     step = round(maxx, -round(floor(log(maxx, 10)))) / (N_TICKS - 1)
-    # x = linspace(0, max(step * N_TICKS, maxx // step * step), num=max(N_TICKS, int(maxx // step)), endpoint=False)
     x = round(arange(0, maxx + step, step), 6)
     return x
 
@@ -114,9 +113,9 @@ distmap = {'beta': [calcBeta, 'cont'],
             'truncated normal': [calcTruncatedNormal, 'cont']}
 
 def oneDistribution(dist, mean, sd, plotThis):
+    x, y1 = distmap[dist][0](mean, sd, plotThis)
     type1 = distmap[dist][1]
-    x, y = distmap[dist][0](mean, sd, plotThis)
-    return x, y, type1
+    return x, y1, type1
 
 def twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis):
     x1, _ = distmap[dist1][0](mean1, sd1, plotThis)
