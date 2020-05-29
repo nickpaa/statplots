@@ -19,18 +19,18 @@ def compare():
 def about():
     return render_template('about.html')
 
-@app.route('/update-plot', methods=['POST'])
-def update_plot():
+@app.route('/update-plot-single', methods=['POST'])
+def update_plot_single():
     req = request.get_json()
 
-    dist = req['dist']
-    mean = float(req['mean'])
-    sd = float(req['sd'])
+    dist1 = req['params1']['dist']
+    mean1 = float(req['params1']['mean'])
+    sd1 = float(req['params1']['sd'])
+
     plotThis = req['plotThis']
 
-    # not refactored to use type1 in JS yet
-    x, y, type1 = oneDistribution(dist, mean, sd, plotThis)
-    stats = {'x':x.tolist(), 'y':y.tolist()}
+    x, y1, type1 = oneDistribution(dist1, mean1, sd1, plotThis)
+    stats = {'x':x.tolist(), 'y1':y1.tolist(), 'type1':type1}
     
     res = make_response(jsonify(stats), 200)
     return res
