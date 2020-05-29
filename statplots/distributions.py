@@ -1,5 +1,5 @@
 from scipy.stats import beta, binom, expon, foldnorm, gamma, nbinom, norm, poisson, truncnorm
-from numpy import linspace, arange, round, nan_to_num, unique, sort, concatenate, nan
+from numpy import linspace, arange, around, nan_to_num
 from math import floor, log
 from itertools import accumulate
 
@@ -57,7 +57,7 @@ def calcNormal(mean, sd, plotThis, x=None):
     scale = sd
     d = norm(loc=loc, scale=scale)
     if x is None:
-        x = round(linspace(mean - 4 * sd, mean + 4 * sd, N_TICKS), 6)
+        x = around(linspace(mean - 4 * sd, mean + 4 * sd, N_TICKS), 6)
     return x, yContinuous(d, x, plotThis)
 
 def calcPoisson(mean, sd, plotThis, x=None):
@@ -80,8 +80,8 @@ def calcTruncatedNormal(mean, sd, plotThis, x=None):
 
 def xContinuousZero(d):
     maxx = d.ppf(0.999)
-    step = round(maxx, -round(floor(log(maxx, 10)))) / (N_TICKS - 1)
-    x = round(arange(0, maxx + step, step), 6)
+    step = around(maxx, -around(floor(log(maxx, 10)))) / (N_TICKS - 1)
+    x = around(arange(0, maxx + step, step), 6)
     return x
 
 def xDiscreteZero(d):
@@ -115,7 +115,7 @@ distmap = {'beta': [calcBeta, 'cont'],
 def oneDistribution(dist, mean, sd, plotThis):
     x, y1 = distmap[dist][0](mean, sd, plotThis)
     type1 = distmap[dist][1]
-    return x, y1, type1
+    return x, around(y1, 6), type1
 
 def twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis):
     x1, _ = distmap[dist1][0](mean1, sd1, plotThis)
@@ -127,18 +127,18 @@ def twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis):
     if (distmap[dist1][1] == 'disc' and distmap[dist2][1] == 'disc'):
         x = arange(minx, maxx + 1, 1)
     elif (distmap[dist1][1] == 'cont' and distmap[dist2][1] == 'cont'):
-        step = round(maxx - minx, -round(floor(log(maxx - minx, 10)))) / (N_TICKS - 1)
-        x = round(arange(minx, maxx + step, step), 6)
+        step = around(maxx - minx, -around(floor(log(maxx - minx, 10)))) / (N_TICKS - 1)
+        x = around(arange(minx, maxx + step, step), 6)
     else:  # mixed types
         if maxx < 50:
-            step = round(maxx - minx, -round(floor(log(maxx - minx, 10)))) / (N_TICKS - 1)
+            step = around(maxx - minx, -around(floor(log(maxx - minx, 10)))) / (N_TICKS - 1)
         elif maxx < 75:
             step = 0.25
         elif maxx < 100:
             step = 0.5
         else:
             step = 1
-        x = round(arange(minx, maxx + step, step), 6)
+        x = around(arange(minx, maxx + step, step), 6)
     
     _, y1 = distmap[dist1][0](mean1, sd1, plotThis, x)
     _, y2 = distmap[dist2][0](mean2, sd2, plotThis, x)
@@ -146,4 +146,4 @@ def twoDistributions(dist1, mean1, sd1, dist2, mean2, sd2, plotThis):
     type1 = distmap[dist1][1]
     type2 = distmap[dist2][1]
 
-    return x, y1, y2, type1, type2
+    return x, around(y1, 6), around(y2, 6), type1, type2
