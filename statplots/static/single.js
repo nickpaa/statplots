@@ -398,10 +398,9 @@ function drawPlot() {
     }
 
     else {
-        plotType = 'line';
-        plotType1 = 'line';
-        if (plotThis === 'fx') radius1 = 3;
-        else radius1 = 1;
+        plotType = 'bar';
+        plotType1 = 'bar';
+        radius1 = 5;
         showLine1 = false;
         y1 = y1.map(function(val, i) {
             return val === 0 ? null : val;
