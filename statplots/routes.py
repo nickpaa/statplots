@@ -6,7 +6,6 @@ from statplots.distributions import *
 
 
 @app.route('/')
-@app.route('/home')
 @app.route('/single')
 def home():
     return render_template('single.html')
