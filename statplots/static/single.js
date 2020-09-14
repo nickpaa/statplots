@@ -699,7 +699,7 @@ function displayXlFormula(d) {
         d.pdfFormula.textContent = "norm.dist(x, " + d.mean + ", " + d.sd + ", false)";
         d.cdfFormula.textContent = "norm.dist(x, " + d.mean + ", " + d.sd + ", true)";
         d.pctFormula.textContent = "norm.inv(" + d.mean + ", " + d.sd + ", alpha)";
-        d.rvFormula.textContent = "";
+        d.rvFormula.textContent = `${d.mean}+${d.sd}*norm.s.inv(mean())`;
     }
     else if (d.whichDist === 'poisson') {
         d.pdfFormula.textContent = "poisson.dist(x, " + d.mean + ", false)";
