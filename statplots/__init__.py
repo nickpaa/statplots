@@ -10,8 +10,10 @@ csp = {
     'cdn.jsdelivr.net',
     'stackpath.bootstrapcdn.com',
     'fonts.googleapis.com',
+    'fonts.gstatic.com',
     'cdnjs.cloudflare.com'
-  ]
+  ],
+  'img-src': '\'self\''
 }
 talisman = Talisman(app, content_security_policy=csp)
 
