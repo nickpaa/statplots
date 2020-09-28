@@ -669,43 +669,43 @@ function displayXlFormula(d) {
     rButton.classList.remove('btn-selected');
     xlButton.classList.add('btn-selected');
     document.getElementById('syntax').textContent = "Excel";
-    document.getElementById('pctDescription').textContent = 'Percentile (evaluated at alpha)'
+    document.getElementById('pctDescription').textContent = 'Percentile (evaluated at p)'
     document.getElementById('rvDescription').textContent = 'Draw one random variable';
 
     if (d.whichDist === 'beta') {
-        let alpha = -d.mean * (d.mean * d.mean - d.mean + d._var) / d._var;
-        let beta = (d.mean - 1) * (d.mean * d.mean - d.mean + d._var) / d._var;
+        let alpha = -d.mean * (d.mean ** 2 - d.mean + d._var) / d._var;
+        let beta = (d.mean - 1) * (d.mean ** 2 - d.mean + d._var) / d._var;
         d.pdfFormula.textContent = "beta.dist(x, " + alpha + ", " + beta + ", false)";
         d.cdfFormula.textContent = "beta.dist(x, " + alpha + ", " + beta + ", true)";
-        d.pctFormula.textContent = "beta.inv(" + alpha + ", " + beta + ", alpha)";
-        d.rvFormula.textContent = "";
+        d.rvFormula.textContent = `beta.inv(p, ${alpha}, ${beta})`;
+        d.rvFormula.textContent = `beta.inv(rand(), ${alpha}, ${beta})`;
     }
     else if (d.whichDist === 'binomial') {
         let trials = d.mean * d.mean / (d.mean - d._var);
         let probability_s = (1 - (d._var / d.mean));
         d.pdfFormula.textContent = "binom.dist(x, " + trials + ", " + probability_s + ", false)";
         d.cdfFormula.textContent = "binom.dist(x, " + trials + ", " + probability_s + ", true)";
-        d.pctFormula.textContent = "binom.inv(" + trials + ", " + probability_s + ", alpha)";
-        d.rvFormula.textContent = "";
+        d.pctFormula.textContent = `binom.inv(${trials}, ${probability_s}, p`;
+        d.rvFormula.textContent = `binom.inv(${trials}, ${probability_s}, rand())`;
     }
     else if (d.whichDist === 'exponential') {
         let lambda = 1 / d.mean;
         d.pdfFormula.textContent = "expon.dist(x, " + lambda + ", false)";
         d.cdfFormula.textContent = "expon.dist(x, " + lambda + ", true)";
-        d.pctFormula.textContent = "";
-        d.rvFormula.textContent = "";
+        d.pctFormula.textContent = `-ln(1 - p) / ${lambda}`;
+        d.rvFormula.textContent = `-ln(1 - rand()) / ${lambda}`;
     }
     else if (d.whichDist === 'normal') {
         d.pdfFormula.textContent = "norm.dist(x, " + d.mean + ", " + d.sd + ", false)";
         d.cdfFormula.textContent = "norm.dist(x, " + d.mean + ", " + d.sd + ", true)";
-        d.pctFormula.textContent = "norm.inv(" + d.mean + ", " + d.sd + ", alpha)";
-        d.rvFormula.textContent = `${d.mean}+${d.sd}*norm.s.inv(rand())`;
+        d.pctFormula.textContent = `norm.inv(${d.mean}, ${d.sd}, p)`
+        d.rvFormula.textContent = `norm.inv(${d.mean}, ${d.sd}, rand())`
     }
     else if (d.whichDist === 'poisson') {
         d.pdfFormula.textContent = "poisson.dist(x, " + d.mean + ", false)";
         d.cdfFormula.textContent = "poisson.dist(x, " + d.mean + ", true)";
-        d.pctFormula.textContent = "poisson.inv(" + d.mean + ", alpha)";
-        d.rvFormula.textContent = "";
+        d.pctFormula.textContent = "poisson.inv(" + d.mean + ", p)";
+        d.rvFormula.textContent = `poisson.inv(${d.mean}, rand())`;
     }
 
     else {
